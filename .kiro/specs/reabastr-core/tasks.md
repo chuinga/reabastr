@@ -6,8 +6,8 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
 
 ## Tasks
 
-- [ ] 1. Bootstrap Terraform (one-time manual apply)
-  - [ ] 1.1 Create S3 state bucket and GitHub OIDC provider
+- [x] 1. Bootstrap Terraform (one-time manual apply)
+  - [x] 1.1 Create S3 state bucket and GitHub OIDC provider
     - Create `terraform/bootstrap/main.tf` with S3 bucket for state (native lockfile locking)
     - Create `terraform/bootstrap/oidc.tf` with GitHub OIDC provider + deploy role (`reabastr-github-deploy`)
     - Create `terraform/bootstrap/variables.tf` and `terraform/bootstrap/outputs.tf`
