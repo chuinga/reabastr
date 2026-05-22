@@ -34,5 +34,6 @@
 - Code is hosted on GitHub; all changes pushed to the remote.
 - Atomic commits, one logical change each; imperative-mood messages
   (e.g., "Add scan endpoint with atomic decrement").
-- Feature branches; never push directly to `main`. Open PRs for review.
-- PRs trigger `terraform plan` (posted as a comment); merges to `main` apply.
+- **Push directly to `main`** — solo developer, no branches or PRs until the product is
+  feature-complete. Keep it simple.
+- CI workflows will be configured later once the product stabilizes.

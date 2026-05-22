@@ -13,22 +13,22 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create `terraform/bootstrap/variables.tf` and `terraform/bootstrap/outputs.tf`
     - _Requirements: 9.7 (infrastructure for auth), tech stack (Terraform, GitHub OIDC)_
 
-- [ ] 2. Core Infrastructure Terraform
-  - [ ] 2.1 Create DynamoDB single-table with GSI1 and TTL
+- [x] 2. Core Infrastructure Terraform
+  - [x] 2.1 Create DynamoDB single-table with GSI1 and TTL
     - Create `terraform/main/dynamodb.tf` with table `reabastr-main`, PK/SK, GSI1 (GSI1PK/GSI1SK), TTL on `ttl` attribute, PAY_PER_REQUEST billing, point-in-time recovery
     - _Requirements: 12.4, 12.1, 10.2_
 
-  - [ ] 2.2 Create Cognito User Pool with Google federation
+  - [x] 2.2 Create Cognito User Pool with Google federation
     - Create `terraform/main/cognito.tf` with User Pool (email sign-in, password policy, Cognito-native email verification), App Client (public, PKCE, no secret), Google identity provider (OIDC)
     - Token validity: access 1h, ID 1h, refresh 30d
     - Callback URLs: `reabastr://callback`, `reabastr://signout`
     - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-  - [ ] 2.3 Create API Gateway REST API with Cognito authorizer
+  - [x] 2.3 Create API Gateway REST API with Cognito authorizer
     - Create `terraform/main/api_gateway.tf` with REST API, Cognito authorizer (`method.request.header.Authorization`), resource paths for all endpoints, CORS configuration
     - _Requirements: 9.7, 9.8_
 
-  - [ ] 2.4 Create Lambda function definitions and IAM roles
+  - [x] 2.4 Create Lambda function definitions and IAM roles
     - Create `terraform/main/lambda.tf` with function definitions for: products, adjust, categories, households, share_code, history, sync
     - Create `terraform/main/lambda_iam.tf` with execution roles granting DynamoDB access to the main table + GSI1
     - Create `terraform/main/backend.tf`, `provider.tf`, `variables.tf`, `outputs.tf`
