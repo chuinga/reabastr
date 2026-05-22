@@ -36,4 +36,13 @@
   (e.g., "Add scan endpoint with atomic decrement").
 - **Push directly to `main`** — solo developer, no branches or PRs until the product is
   feature-complete. Keep it simple.
+- **Commit and push after every completed task** — never accumulate uncommitted work.
+  Each task = one commit + push.
 - CI workflows will be configured later once the product stabilizes.
+
+## User Testing
+- As soon as something is testable (even basic smoke tests), **stop and ask the user to
+  verify** before moving on. Don't wait for a checkpoint task.
+- For backend: provide the endpoint, sample curl command, or test instructions.
+- For Android: describe the screen/flow to exercise.
+- Prefer early, small verification loops over late, large ones.

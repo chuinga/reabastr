@@ -55,54 +55,54 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Add to `lambda/products/handler.py` or create `lambda/eans/handler.py`: POST `/products/{productId}/eans` (add EAN, validate 8/13 digits, enforce uniqueness within household via GSI1 lookup, max 20 per product), DELETE `/products/{productId}/eans/{ean}`, GET `/eans/{ean}` (lookup product by EAN, household-scoped)
     - _Requirements: 4.5, 4.6, 4.7_
 
-  - [ ]* 4.5 Write property tests for Products and Categories (Python/hypothesis)
+  - [x]* 4.5 Write property tests for Products and Categories (Python/hypothesis)
     - **Property 7: EAN Uniqueness Within Household** — Generate random EAN assignments; duplicate EAN within household always returns 409
     - **Validates: Requirements 4.7**
 
-  - [ ]* 4.6 Write unit tests for Products and Categories handlers
+  - [x]* 4.6 Write unit tests for Products and Categories handlers
     - Test input validation, error responses, DynamoDB expressions using moto
     - Test duplicate name rejection, invalid category reference, EAN limit (20)
     - _Requirements: 5.1–5.7, 6.1–6.6, 4.5–4.7_
 
-- [ ] 5. Lambda Handlers — Stock Adjustments & History
-  - [ ] 5.1 Implement Adjust Lambda handler
+- [x] 5. Lambda Handlers — Stock Adjustments & History
+  - [x] 5.1 Implement Adjust Lambda handler
     - Create `lambda/adjust/handler.py` with POST `/adjust`: validate household membership, apply atomic ADD delta to currentQty via UpdateExpression, ConditionExpression for negative-stock guard (`currentQty + :delta >= 0` for decrements), write History record on success with 90-day TTL, return updated currentQty
     - _Requirements: 1.4, 1.5, 2.6, 2.7, 12.1, 12.2, 12.3, 12.5, 12.6, 12.7_
 
-  - [ ] 5.2 Implement History Lambda handler
+  - [x] 5.2 Implement History Lambda handler
     - Create `lambda/history/handler.py` with GET `/history`: paginated (limit + cursor), reverse chronological using `ScanIndexForward=False`, household-scoped
     - _Requirements: 10.1, 10.2, 10.3_
 
-  - [ ]* 5.3 Write property tests for Adjust handler (Python/hypothesis)
+  - [x]* 5.3 Write property tests for Adjust handler (Python/hypothesis)
     - **Property 2: Atomic Delta Commutativity** — Random permutations of delta sequences; final qty == initial + sum regardless of order
     - **Validates: Requirements 12.1, 12.3**
 
-  - [ ]* 5.4 Write property test for non-negative stock guard (Python/hypothesis)
+  - [x]* 5.4 Write property test for non-negative stock guard (Python/hypothesis)
     - **Property 3: Non-Negative Stock Invariant** — Random negative deltas against low currentQty; currentQty never goes below 0, rejection returns 409
     - **Validates: Requirements 1.5, 12.2**
 
-  - [ ]* 5.5 Write property test for history completeness (Python/hypothesis)
+  - [x]* 5.5 Write property test for history completeness (Python/hypothesis)
     - **Property 10: History Completeness** — Random delta batches; successful deltas produce exactly 1 history record each, rejected produce 0
     - **Validates: Requirements 12.6, 12.7, 10.1**
 
-  - [ ]* 5.6 Write property test for idealQty independence (Python/hypothesis)
+  - [x]* 5.6 Write property test for idealQty independence (Python/hypothesis)
     - **Property 9: IdealQty Independence** — Random interleaved updates to ideal and current; neither field affects the other
     - **Validates: Requirements 12.5, 5.3**
 
-- [ ] 6. Lambda Handlers — Households & Sharing
-  - [ ] 6.1 Implement Households Lambda handler
+- [x] 6. Lambda Handlers — Households & Sharing
+  - [x] 6.1 Implement Households Lambda handler
     - Create `lambda/households/handler.py` with GET `/household` (return household info + members, 404 if no membership), POST `/household` (create household + membership), POST `/household/leave` (remove membership)
     - _Requirements: 7.4, 7.5_
 
-  - [ ] 6.2 Implement Share Code Lambda handler
+  - [x] 6.2 Implement Share Code Lambda handler
     - Create `lambda/share_code/handler.py` with POST `/household/share-code` (generate code, 24h TTL, replace existing active code for household), POST `/household/join` (redeem code: validate not expired/redeemed, add membership, invalidate code, reject if user already in a household)
     - _Requirements: 7.1, 7.2, 7.3, 7.6, 7.7_
 
-  - [ ]* 6.3 Write property test for share code lifecycle (Python/hypothesis)
+  - [x]* 6.3 Write property test for share code lifecycle (Python/hypothesis)
     - **Property 8: Share Code Single-Use** — Random redeem/expire sequences; code is usable exactly once
     - **Validates: Requirements 7.2, 7.3**
 
-  - [ ]* 6.4 Write property test for household isolation (Python/hypothesis)
+  - [x]* 6.4 Write property test for household isolation (Python/hypothesis)
     - **Property 6: Household Isolation** — Random user/household pairs; cross-household access always returns 403
     - **Validates: Requirements 9.9, 2.6, 2.7**
 
