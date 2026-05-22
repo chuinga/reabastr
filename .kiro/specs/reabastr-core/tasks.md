@@ -37,21 +37,21 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
 - [ ] 3. Checkpoint — Terraform plan clean
   - Ensure `terraform plan` runs cleanly with no errors, ask the user if questions arise.
 
-- [ ] 4. Lambda Handlers — Products & Categories
-  - [ ] 4.1 Create shared Lambda utilities module
+- [x] 4. Lambda Handlers — Products & Categories
+  - [x] 4.1 Create shared Lambda utilities module
     - Create `lambda/shared/` with: `db.py` (DynamoDB table client initialized outside handler), `auth.py` (household resolution via GSI1 `USR#<sub>` lookup), `errors.py` (structured error responses), `validators.py` (input validation helpers)
     - _Requirements: 9.9, 12.4_
 
-  - [ ] 4.2 Implement Products Lambda handler
+  - [x] 4.2 Implement Products Lambda handler
     - Create `lambda/products/handler.py` with GET (list all products in household), POST (create product, validate name uniqueness case-insensitive, validate category exists, initialize currentQty=0), PUT (update name/idealQty/category, preserve currentQty), DELETE (remove product + all EAN mappings)
     - Enforce household membership on every operation
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 9.9_
 
-  - [ ] 4.3 Implement Categories Lambda handler
+  - [x] 4.3 Implement Categories Lambda handler
     - Create `lambda/categories/handler.py` with GET (list by sortOrder), POST (create with next sortOrder, enforce unique name), PUT (update name/sortOrder), DELETE (require product reassignment param, block if last category), PUT `/reorder` (batch update sortOrder)
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
-  - [ ] 4.4 Implement EAN management endpoints
+  - [x] 4.4 Implement EAN management endpoints
     - Add to `lambda/products/handler.py` or create `lambda/eans/handler.py`: POST `/products/{productId}/eans` (add EAN, validate 8/13 digits, enforce uniqueness within household via GSI1 lookup, max 20 per product), DELETE `/products/{productId}/eans/{ean}`, GET `/eans/{ean}` (lookup product by EAN, household-scoped)
     - _Requirements: 4.5, 4.6, 4.7_
 
