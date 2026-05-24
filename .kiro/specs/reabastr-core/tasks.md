@@ -34,7 +34,7 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create `terraform/main/backend.tf`, `provider.tf`, `variables.tf`, `outputs.tf`
     - _Requirements: 9.7, 9.9_
 
-- [ ] 3. Checkpoint — Terraform plan clean
+- [x] 3. Checkpoint — Terraform plan clean
   - Ensure `terraform plan` runs cleanly with no errors, ask the user if questions arise.
 
 - [x] 4. Lambda Handlers — Products & Categories
