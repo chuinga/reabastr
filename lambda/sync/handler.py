@@ -284,10 +284,18 @@ def _get_user_name(hh_id: str, user_sub: str) -> str:
     return user_sub
 
 
+def _json_default(obj: Any) -> Any:
+    """JSON serializer for DynamoDB Decimal types."""
+    from decimal import Decimal
+    if isinstance(obj, Decimal):
+        return int(obj) if obj == int(obj) else float(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
 def _response(status_code: int, body: Any) -> dict[str, Any]:
     """Build an API Gateway proxy response."""
     return {
         "statusCode": status_code,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(body),
+        "body": json.dumps(body, default=_json_default),
     }

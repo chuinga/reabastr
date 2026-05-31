@@ -106,12 +106,12 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - **Property 6: Household Isolation** — Random user/household pairs; cross-household access always returns 403
     - **Validates: Requirements 9.9, 2.6, 2.7**
 
-- [ ] 7. Lambda Handlers — Sync
-  - [ ] 7.1 Implement Sync Lambda handler
+- [x] 7. Lambda Handlers — Sync
+  - [x] 7.1 Implement Sync Lambda handler
     - Create `lambda/sync/handler.py` with GET `/sync` (return full household state: products, categories, EAN mappings), POST `/sync/batch` (process multiple delta events in sequence, each with atomic ADD + history write)
     - _Requirements: 8.3, 8.6, 12.1_
 
-- [ ] 8. Checkpoint — Backend tests pass, API ready for verification
+- [-] 8. Checkpoint — Backend tests pass, API ready for verification
   - Ensure all pytest tests pass (unit + property-based with moto), ask the user if questions arise.
 
 - [ ] 9. CI/CD Pipelines

@@ -202,10 +202,18 @@ def _find_ean_in_household(ean: str, hh_id: str) -> dict[str, Any] | None:
     return items[0] if items else None
 
 
+def _json_default(obj: Any) -> Any:
+    """JSON serializer for DynamoDB Decimal types."""
+    from decimal import Decimal
+    if isinstance(obj, Decimal):
+        return int(obj) if obj == int(obj) else float(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
 def _json_response(status_code: int, body: dict[str, Any]) -> dict[str, Any]:
     """Build an API Gateway proxy response."""
     return {
         "statusCode": status_code,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(body),
+        "body": json.dumps(body, default=_json_default),
     }

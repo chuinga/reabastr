@@ -292,6 +292,14 @@ def _format_product(item: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _json_default(obj: Any) -> Any:
+    """JSON serializer for DynamoDB Decimal and other non-standard types."""
+    from decimal import Decimal
+    if isinstance(obj, Decimal):
+        return int(obj) if obj == int(obj) else float(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
 def _response(status_code: int, body: Any) -> dict[str, Any]:
     """Build an API Gateway proxy response."""
     resp: dict[str, Any] = {
@@ -299,7 +307,7 @@ def _response(status_code: int, body: Any) -> dict[str, Any]:
         "headers": {"Content-Type": "application/json"},
     }
     if body is not None:
-        resp["body"] = json.dumps(body)
+        resp["body"] = json.dumps(body, default=_json_default)
     else:
         resp["body"] = ""
     return resp

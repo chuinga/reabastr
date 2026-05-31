@@ -30,6 +30,14 @@ from shared.errors import (
 from shared.validators import validate_required_fields, validate_string_length
 
 
+def _json_default(obj: Any) -> Any:
+    """JSON serializer for DynamoDB Decimal types."""
+    from decimal import Decimal
+    if isinstance(obj, Decimal):
+        return int(obj) if obj == int(obj) else float(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
 def handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Route incoming API Gateway proxy event to the appropriate action."""
     try:
@@ -137,7 +145,7 @@ def _list_categories(hh_id: str) -> dict[str, Any]:
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"items": items}),
+        "body": json.dumps({"items": items}, default=_json_default),
     }
 
 
@@ -228,7 +236,7 @@ def _update_category(hh_id: str, cat_id: str, body: dict[str, Any]) -> dict[str,
             "categoryId": cat_id,
             "name": updated["name"],
             "sortOrder": updated.get("sortOrder", 0),
-        }),
+        }, default=_json_default),
     }
 
 
