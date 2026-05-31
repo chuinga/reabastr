@@ -111,18 +111,18 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create `lambda/sync/handler.py` with GET `/sync` (return full household state: products, categories, EAN mappings), POST `/sync/batch` (process multiple delta events in sequence, each with atomic ADD + history write)
     - _Requirements: 8.3, 8.6, 12.1_
 
-- [-] 8. Checkpoint — Backend tests pass, API ready for verification
+- [x] 8. Checkpoint — Backend tests pass, API ready for verification
   - Ensure all pytest tests pass (unit + property-based with moto), ask the user if questions arise.
 
-- [ ] 9. CI/CD Pipelines
-  - [ ] 9.1 Create GitHub Actions workflows
+- [x] 9. CI/CD Pipelines
+  - [x] 9.1 Create GitHub Actions workflows
     - Create `.github/workflows/terraform.yml` (path-filtered on `terraform/main/**`, OIDC auth, plan on PR, apply on merge to main)
     - Create `.github/workflows/lambda.yml` (path-filtered on `lambda/**`, pytest on PR, zip + deploy on merge)
     - Create `.github/workflows/android.yml` (path-filtered on `android/**`, unit tests on PR, assemble release on merge)
     - _Requirements: tech stack (GitHub Actions, OIDC, path-filtered)_
 
 - [ ] 10. Android — Project Setup & Auth
-  - [ ] 10.1 Create Android project structure with dependencies
+  - [x] 10.1 Create Android project structure with dependencies
     - Initialize `android/` with Kotlin, Jetpack Compose, Material 3, Room, WorkManager, ML Kit barcode, Retrofit, Hilt (DI), EncryptedSharedPreferences
     - Set up module structure, build.gradle with all dependencies
     - _Requirements: tech stack (Kotlin, Compose, Material 3, Room, WorkManager, ML Kit)_
