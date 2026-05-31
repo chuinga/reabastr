@@ -1,0 +1,70 @@
+name: Lambda
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lambda/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "lambda/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-west-1
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  test:
+    name: Pytest
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest --tb=short -q
+
+  deploy:
+    name: Deploy Lambdas
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/reabastr-github-deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Package and deploy each function
+        run: |
+          FUNCTIONS=(products adjust categories households share_code history sync eans)
+          for func in "${FUNCTIONS[@]}"; do
+            echo "--- Deploying reabastr-${func} ---"
+            cd "${GITHUB_WORKSPACE}/lambda/${func}"
+            # Include shared module
+            cp -r "${GITHUB_WORKSPACE}/lambda/shared" ./shared
+            zip -r "/tmp/${func}.zip" . -x '__pycache__/*' '**/__pycache__/*'
+            aws lambda update-function-code \
+              --function-name "reabastr-${func}" \
+              --zip-file "fileb:///tmp/${func}.zip"
+            # Clean up copied shared module
+            rm -rf ./shared
+          done
