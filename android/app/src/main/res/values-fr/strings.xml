@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Reabastr</string>
+
+    <!-- Sign In -->
+    <string name="sign_in_subtitle">Gérez l\'inventaire de votre foyer</string>
+    <string name="sign_in_google">Se connecter avec Google</string>
+    <string name="sign_in_or">ou</string>
+    <string name="sign_in_email_label">Email</string>
+    <string name="sign_in_password_label">Mot de passe</string>
+    <string name="sign_in_button">Se connecter</string>
+    <string name="sign_in_show_password">Afficher le mot de passe</string>
+    <string name="sign_in_hide_password">Masquer le mot de passe</string>
 </resources>
