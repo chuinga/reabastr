@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -19,6 +20,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.reabastr.app.auth.AuthState
 import com.reabastr.app.auth.AuthViewModel
 import com.reabastr.app.auth.SignInScreen
+import com.reabastr.app.onboarding.OnboardScreen
+import com.reabastr.app.onboarding.OnboardState
+import com.reabastr.app.onboarding.OnboardViewModel
 import com.reabastr.app.ui.theme.ReabastrTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -92,20 +96,45 @@ fun ReabastrApp() {
             SignInScreen(viewModel = authViewModel)
         }
         is AuthState.Authenticated -> {
+            AuthenticatedContent()
+        }
+    }
+}
+
+/**
+ * Content shown after authentication. Checks household membership
+ * and shows onboarding if needed, otherwise shows the main app.
+ */
+@Composable
+private fun AuthenticatedContent() {
+    val onboardViewModel: OnboardViewModel = hiltViewModel()
+    val onboardState by onboardViewModel.onboardState.collectAsStateWithLifecycle()
+
+    when (onboardState) {
+        is OnboardState.Checking -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is OnboardState.NeedsHousehold, is OnboardState.Error -> {
+            OnboardScreen(viewModel = onboardViewModel)
+        }
+        is OnboardState.HasHousehold -> {
             // Main app content — will be wired with navigation in later tasks
-            AuthenticatedPlaceholder(authState as AuthState.Authenticated)
+            MainAppPlaceholder()
         }
     }
 }
 
 @Composable
-private fun AuthenticatedPlaceholder(state: AuthState.Authenticated) {
+private fun MainAppPlaceholder() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        androidx.compose.material3.Text(
-            text = "Welcome, ${state.displayName ?: state.email}"
-        )
+        Text(text = "Main App — Coming Soon")
     }
 }

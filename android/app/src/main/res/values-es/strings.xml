@@ -11,4 +11,16 @@
     <string name="sign_in_button">Iniciar sesión</string>
     <string name="sign_in_show_password">Mostrar contraseña</string>
     <string name="sign_in_hide_password">Ocultar contraseña</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_title">Configura tu hogar</string>
+    <string name="onboard_subtitle">Crea un nuevo hogar o únete a uno existente con un código de invitación.</string>
+    <string name="onboard_create_household">Crear hogar</string>
+    <string name="onboard_or">o</string>
+    <string name="onboard_join_title">Unirse a un hogar existente</string>
+    <string name="onboard_share_code_label">Código de invitación</string>
+    <string name="onboard_share_code_placeholder">ej. ABCD-1234-EFGH</string>
+    <string name="onboard_join_button">Unirse con código</string>
+    <string name="onboard_error_title">Algo salió mal</string>
+    <string name="onboard_retry">Reintentar</string>
 </resources>

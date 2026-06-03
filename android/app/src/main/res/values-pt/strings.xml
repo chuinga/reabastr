@@ -11,4 +11,16 @@
     <string name="sign_in_button">Entrar</string>
     <string name="sign_in_show_password">Mostrar palavra-passe</string>
     <string name="sign_in_hide_password">Ocultar palavra-passe</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_title">Configurar o seu lar</string>
+    <string name="onboard_subtitle">Crie um novo lar ou junte-se a um existente com um código de partilha.</string>
+    <string name="onboard_create_household">Criar lar</string>
+    <string name="onboard_or">ou</string>
+    <string name="onboard_join_title">Juntar-se a um lar existente</string>
+    <string name="onboard_share_code_label">Código de partilha</string>
+    <string name="onboard_share_code_placeholder">ex. ABCD-1234-EFGH</string>
+    <string name="onboard_join_button">Entrar com código</string>
+    <string name="onboard_error_title">Algo correu mal</string>
+    <string name="onboard_retry">Tentar novamente</string>
 </resources>

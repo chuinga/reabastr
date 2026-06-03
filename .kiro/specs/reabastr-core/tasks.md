@@ -127,24 +127,24 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Set up module structure, build.gradle with all dependencies
     - _Requirements: tech stack (Kotlin, Compose, Material 3, Room, WorkManager, ML Kit)_
 
-  - [-] 10.2 Implement AuthRepository and sign-in flow
+  - [x] 10.2 Implement AuthRepository and sign-in flow
     - Create `AuthRepository` with Cognito sign-in (Google OAuth PKCE via Chrome Custom Tab + email/password via SRP), token storage in EncryptedSharedPreferences, proactive token refresh (5 min before expiry), refresh token handling, sign-out
     - Create Sign-In screen composable with Google and email/password options
     - _Requirements: 9.1, 9.2, 9.4, 9.5, 9.6_
 
-  - [~] 10.3 Implement onboarding flow (create/join household)
+  - [-] 10.3 Implement onboarding flow (create/join household)
     - Create Onboard screen: check `GET /household` → if 404, show "Create household" or "Join with code" options
     - Wire to POST `/household` and POST `/household/join`
     - _Requirements: 7.1, 7.2_
 
 - [ ] 11. Android — Room Database & Data Layer
-  - [-] 11.1 Create Room database entities and DAOs
+  - [x] 11.1 Create Room database entities and DAOs
     - Define `ProductEntity`, `CategoryEntity`, `OutboxEvent` entities (as specified in design)
     - Create DAOs with queries: products by household, categories by sortOrder, outbox pending/failed, insert/update/delete operations
     - Create TypeConverters for List<String> (EAN list)
     - _Requirements: 8.1, 8.2, 8.4_
 
-  - [~] 11.2 Implement InventoryRepository
+  - [-] 11.2 Implement InventoryRepository
     - Create `InventoryRepository`: local-first delta application (Room update within 200ms), product/category CRUD bridging Room and API, EAN lookup from local cache
     - _Requirements: 1.1, 1.2, 2.1, 2.3, 3.1, 3.4, 8.1_
 
@@ -154,7 +154,7 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create `ReconcileWorker`: pull full state via GET `/sync`, reconcile Room cache preserving pending outbox deltas
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8_
 
-  - [~] 11.4 Implement ApiService (Retrofit)
+  - [-] 11.4 Implement ApiService (Retrofit)
     - Create Retrofit interface with all backend endpoints, JWT Bearer interceptor, structured error parsing
     - _Requirements: 9.4, 9.7_
 
@@ -219,8 +219,8 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Verify no hardcoded strings in composables, test 320dp minimum width
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
 
-- [ ] 19. Android — Material 3 Theming
-  - [-] 19.1 Implement ReabastrTheme with dark/light support
+- [x] 19. Android — Material 3 Theming
+  - [x] 19.1 Implement ReabastrTheme with dark/light support
     - Create `ReabastrTheme` composable: dynamic color on Android 12+, fallback brand palette (warm green primary + neutral surfaces), dark and light color schemes, typography
     - _Requirements: tech stack (Material 3, dark + light themes)_
 

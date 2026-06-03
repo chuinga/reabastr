@@ -11,4 +11,16 @@
     <string name="sign_in_button">Sign in</string>
     <string name="sign_in_show_password">Show password</string>
     <string name="sign_in_hide_password">Hide password</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_title">Set up your household</string>
+    <string name="onboard_subtitle">Create a new household or join an existing one with a share code.</string>
+    <string name="onboard_create_household">Create household</string>
+    <string name="onboard_or">or</string>
+    <string name="onboard_join_title">Join an existing household</string>
+    <string name="onboard_share_code_label">Share code</string>
+    <string name="onboard_share_code_placeholder">e.g. ABCD-1234-EFGH</string>
+    <string name="onboard_join_button">Join with code</string>
+    <string name="onboard_error_title">Something went wrong</string>
+    <string name="onboard_retry">Retry</string>
 </resources>

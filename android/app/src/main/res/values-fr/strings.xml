@@ -11,4 +11,16 @@
     <string name="sign_in_button">Se connecter</string>
     <string name="sign_in_show_password">Afficher le mot de passe</string>
     <string name="sign_in_hide_password">Masquer le mot de passe</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_title">Configurez votre foyer</string>
+    <string name="onboard_subtitle">Créez un nouveau foyer ou rejoignez-en un existant avec un code de partage.</string>
+    <string name="onboard_create_household">Créer un foyer</string>
+    <string name="onboard_or">ou</string>
+    <string name="onboard_join_title">Rejoindre un foyer existant</string>
+    <string name="onboard_share_code_label">Code de partage</string>
+    <string name="onboard_share_code_placeholder">ex. ABCD-1234-EFGH</string>
+    <string name="onboard_join_button">Rejoindre avec le code</string>
+    <string name="onboard_error_title">Un problème est survenu</string>
+    <string name="onboard_retry">Réessayer</string>
 </resources>

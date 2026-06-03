@@ -19,7 +19,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    @UnauthenticatedClient
+    fun provideUnauthenticatedOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -43,7 +44,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCognitoAuthService(
-        httpClient: OkHttpClient
+        @UnauthenticatedClient httpClient: OkHttpClient
     ): CognitoAuthService {
         return CognitoAuthService(httpClient)
     }
