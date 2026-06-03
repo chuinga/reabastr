@@ -18,8 +18,11 @@ interface ProductDao {
     @Query("SELECT * FROM products WHERE productId = :productId")
     suspend fun getProductById(productId: String): ProductEntity?
 
-    @Query("SELECT * FROM products WHERE householdId = :householdId AND :ean IN (eans)")
+    @Query("SELECT * FROM products WHERE householdId = :householdId AND eans LIKE '%' || :ean || '%'")
     suspend fun getProductByEan(householdId: String, ean: String): ProductEntity?
+
+    @Query("UPDATE products SET currentQty = currentQty + :delta WHERE productId = :productId")
+    suspend fun applyDelta(productId: String, delta: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(product: ProductEntity)
