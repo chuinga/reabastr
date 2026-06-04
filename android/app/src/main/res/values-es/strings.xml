@@ -78,6 +78,19 @@
     <string name="setup_product_created">Producto creado</string>
     <string name="setup_category_created">Categoría creada</string>
 
+    <!-- Quick Create Product -->
+    <string name="quick_create_title">Nuevo producto</string>
+    <string name="quick_create_ean_label">Código de barras (EAN)</string>
+    <string name="quick_create_name_label">Nombre del producto</string>
+    <string name="quick_create_name_error">El nombre debe tener entre 1 y 100 caracteres</string>
+    <string name="quick_create_ideal_qty_label">Cantidad ideal</string>
+    <string name="quick_create_ideal_qty_error">La cantidad debe ser entre 1 y 999</string>
+    <string name="quick_create_category_label">Categoría</string>
+    <string name="quick_create_category_error">Por favor seleccione una categoría</string>
+    <string name="quick_create_submit">Crear producto</string>
+    <string name="quick_create_cancel">Cancelar</string>
+    <string name="quick_create_success">Producto creado</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configura tu hogar</string>
     <string name="onboard_subtitle">Crea un nuevo hogar o únete a uno existente con un código de invitación.</string>

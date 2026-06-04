@@ -78,6 +78,19 @@
     <string name="setup_product_created">Produit créé</string>
     <string name="setup_category_created">Catégorie créée</string>
 
+    <!-- Quick Create Product -->
+    <string name="quick_create_title">Nouveau produit</string>
+    <string name="quick_create_ean_label">Code-barres (EAN)</string>
+    <string name="quick_create_name_label">Nom du produit</string>
+    <string name="quick_create_name_error">Le nom doit contenir entre 1 et 100 caractères</string>
+    <string name="quick_create_ideal_qty_label">Quantité idéale</string>
+    <string name="quick_create_ideal_qty_error">La quantité doit être entre 1 et 999</string>
+    <string name="quick_create_category_label">Catégorie</string>
+    <string name="quick_create_category_error">Veuillez sélectionner une catégorie</string>
+    <string name="quick_create_submit">Créer le produit</string>
+    <string name="quick_create_cancel">Annuler</string>
+    <string name="quick_create_success">Produit créé</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurez votre foyer</string>
     <string name="onboard_subtitle">Créez un nouveau foyer ou rejoignez-en un existant avec un code de partage.</string>
