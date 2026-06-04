@@ -113,6 +113,14 @@
     <string name="settings_leave_dialog_confirm">Leave</string>
     <string name="settings_leave_dialog_cancel">Cancel</string>
 
+    <!-- Sync -->
+    <string name="sync_notification_channel_name">Sync Status</string>
+    <string name="sync_notification_channel_description">Notifications about sync failures and outbox status</string>
+    <string name="sync_failed_notification_title">Sync failed</string>
+    <string name="sync_failed_notification_body">%1$s action on %2$s could not be synced</string>
+    <string name="sync_capacity_warning_title">Sync queue full</string>
+    <string name="sync_capacity_warning_message">More than 500 pending changes. Connect to the internet to sync.</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Set up your household</string>
     <string name="onboard_subtitle">Create a new household or join an existing one with a share code.</string>

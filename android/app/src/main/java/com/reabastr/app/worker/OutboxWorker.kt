@@ -9,6 +9,7 @@ import com.reabastr.app.data.local.dao.OutboxDao
 import com.reabastr.app.data.local.entity.OutboxEvent
 import com.reabastr.app.data.remote.ApiService
 import com.reabastr.app.data.remote.dto.AdjustRequest
+import com.reabastr.app.data.sync.SyncManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
@@ -19,15 +20,19 @@ import java.io.IOException
  * is available. Implements exponential backoff (1s, 2s, 4s) for transient failures,
  * marking events as FAILED after 3 retries are exhausted.
  *
- * Connectivity constraint is set by [SyncRepository.scheduleOutboxDrain].
+ * Connectivity constraint is set by [SyncManager.schedulePersistedOutboxWorker].
  * Halts processing if >500 pending events (safety valve).
+ *
+ * WorkManager guarantees this work persists across app restarts and device reboots
+ * (Req 8.4), ensuring the outbox will always drain once connectivity is restored.
  */
 @HiltWorker
 class OutboxWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val outboxDao: OutboxDao,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val syncManager: SyncManager
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
@@ -76,7 +81,8 @@ class OutboxWorker @AssistedInject constructor(
      * Returns true if successfully uploaded (event removed from outbox),
      * or false if a transient error occurred and the event should be retried later.
      *
-     * After exhausting retries, marks the event as FAILED and continues.
+     * After exhausting retries, marks the event as FAILED, notifies the user,
+     * and continues to the next event.
      */
     private suspend fun uploadEvent(event: OutboxEvent): Boolean {
         var currentRetry = event.retryCount
@@ -118,7 +124,7 @@ class OutboxWorker @AssistedInject constructor(
                     }
                 }
             } catch (e: IOException) {
-                // Network error — apply backoff
+                // Network error — apply backoff (Req 8.8)
                 currentRetry++
                 updateRetryCount(event, currentRetry)
                 if (currentRetry < MAX_RETRIES) {
@@ -151,5 +157,7 @@ class OutboxWorker @AssistedInject constructor(
 
     private suspend fun markAsFailed(event: OutboxEvent, retryCount: Int) {
         outboxDao.update(event.copy(status = "FAILED", retryCount = retryCount))
+        // Notify user about the failed event (Req 8.5)
+        syncManager.notifyFailedEvent(event)
     }
 }

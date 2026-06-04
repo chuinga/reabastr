@@ -7,9 +7,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.reabastr.app.data.local.dao.OutboxDao
 import com.reabastr.app.data.local.entity.OutboxEvent
+import com.reabastr.app.data.sync.SyncManager
 import com.reabastr.app.worker.OutboxWorker
 import com.reabastr.app.worker.ReconcileWorker
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,12 +23,14 @@ import javax.inject.Singleton
  * - Enqueue delta events to the outbox (within 1s of local mutation)
  * - Schedule OutboxWorker to drain pending events when connectivity is available
  * - Schedule ReconcileWorker to pull full state on reconnection
- * - Enforce the 500 pending event halt threshold
+ * - Enforce the 500 pending event halt threshold (delegates to SyncManager)
+ * - Surface failed event notifications (delegates to SyncManager)
  */
 @Singleton
 class SyncRepository @Inject constructor(
     private val outboxDao: OutboxDao,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
+    private val syncManager: SyncManager
 ) {
 
     companion object {
@@ -35,14 +39,20 @@ class SyncRepository @Inject constructor(
         const val MAX_PENDING_EVENTS = 500
     }
 
+    /** True when >500 pending events — UI should block new enqueues and show warning. */
+    val syncCapacityWarning: StateFlow<Boolean> = syncManager.syncCapacityWarning
+
+    /** Observable list of failed outbox events. */
+    val failedEvents: StateFlow<List<OutboxEvent>> = syncManager.failedEvents
+
     /**
      * Enqueues a delta event to the sync outbox.
-     * Returns false if the outbox has reached the 500-event halt threshold.
+     * Returns [EnqueueResult.HaltThresholdReached] if the outbox has >500 pending events.
      * Schedules the OutboxWorker for background drain on connectivity.
      */
     suspend fun enqueueDeltaEvent(productId: String, delta: Int): EnqueueResult {
-        val pendingCount = outboxDao.getPendingCount()
-        if (pendingCount >= MAX_PENDING_EVENTS) {
+        // Check capacity via SyncManager (also updates warning state)
+        if (!syncManager.checkSyncCapacity()) {
             return EnqueueResult.HaltThresholdReached
         }
 
@@ -117,6 +127,14 @@ class SyncRepository @Inject constructor(
     /** Returns all failed events for display/notification. */
     suspend fun getFailedEvents(): List<OutboxEvent> {
         return outboxDao.getFailedEvents()
+    }
+
+    /**
+     * Notifies the user about a failed event via SyncManager.
+     * Call this when the OutboxWorker marks an event as FAILED.
+     */
+    suspend fun notifyFailedEvent(event: OutboxEvent) {
+        syncManager.notifyFailedEvent(event)
     }
 }
 
