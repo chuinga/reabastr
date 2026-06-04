@@ -15,6 +15,9 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE householdId = :householdId ORDER BY sortOrder ASC")
     fun getCategoriesByHousehold(householdId: String): Flow<List<CategoryEntity>>
 
+    @Query("SELECT * FROM categories LIMIT 1")
+    suspend fun getAllCategories(): List<CategoryEntity>
+
     @Query("SELECT * FROM categories WHERE categoryId = :categoryId")
     suspend fun getCategoryById(categoryId: String): CategoryEntity?
 

@@ -121,7 +121,7 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create `.github/workflows/android.yml` (path-filtered on `android/**`, unit tests on PR, assemble release on merge)
     - _Requirements: tech stack (GitHub Actions, OIDC, path-filtered)_
 
-- [ ] 10. Android — Project Setup & Auth
+- [x] 10. Android — Project Setup & Auth
   - [x] 10.1 Create Android project structure with dependencies
     - Initialize `android/` with Kotlin, Jetpack Compose, Material 3, Room, WorkManager, ML Kit barcode, Retrofit, Hilt (DI), EncryptedSharedPreferences
     - Set up module structure, build.gradle with all dependencies
@@ -132,34 +132,34 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create Sign-In screen composable with Google and email/password options
     - _Requirements: 9.1, 9.2, 9.4, 9.5, 9.6_
 
-  - [-] 10.3 Implement onboarding flow (create/join household)
+  - [x] 10.3 Implement onboarding flow (create/join household)
     - Create Onboard screen: check `GET /household` → if 404, show "Create household" or "Join with code" options
     - Wire to POST `/household` and POST `/household/join`
     - _Requirements: 7.1, 7.2_
 
-- [ ] 11. Android — Room Database & Data Layer
+- [x] 11. Android — Room Database & Data Layer
   - [x] 11.1 Create Room database entities and DAOs
     - Define `ProductEntity`, `CategoryEntity`, `OutboxEvent` entities (as specified in design)
     - Create DAOs with queries: products by household, categories by sortOrder, outbox pending/failed, insert/update/delete operations
     - Create TypeConverters for List<String> (EAN list)
     - _Requirements: 8.1, 8.2, 8.4_
 
-  - [-] 11.2 Implement InventoryRepository
+  - [x] 11.2 Implement InventoryRepository
     - Create `InventoryRepository`: local-first delta application (Room update within 200ms), product/category CRUD bridging Room and API, EAN lookup from local cache
     - _Requirements: 1.1, 1.2, 2.1, 2.3, 3.1, 3.4, 8.1_
 
-  - [~] 11.3 Implement SyncRepository and OutboxWorker
+  - [x] 11.3 Implement SyncRepository and OutboxWorker
     - Create `SyncRepository`: enqueue delta events to outbox (within 1s), manage outbox drain via WorkManager
     - Create `OutboxWorker`: on connectivity, drain outbox chronologically, 3 retries with exponential backoff (1s, 2s, 4s), mark FAILED after exhaustion, halt at 500 pending events
     - Create `ReconcileWorker`: pull full state via GET `/sync`, reconcile Room cache preserving pending outbox deltas
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8_
 
-  - [-] 11.4 Implement ApiService (Retrofit)
+  - [x] 11.4 Implement ApiService (Retrofit)
     - Create Retrofit interface with all backend endpoints, JWT Bearer interceptor, structured error parsing
     - _Requirements: 9.4, 9.7_
 
 - [ ] 12. Android — Home Page (Take from Stock)
-  - [~] 12.1 Implement HomeViewModel and HomePage composable
+  - [-] 12.1 Implement HomeViewModel and HomePage composable
     - Create `HomeViewModel` with product list state, decrement action (local Room update + outbox enqueue), scan result handling (EAN lookup → decrement or trigger quick-create)
     - Create `HomePage` composable: product list with −1 buttons, out-of-stock guard (prevent decrement at qty 0, show message 3s), scan FAB
     - _Requirements: 1.1, 1.2, 1.3, 1.6, 1.8, 1.9_
@@ -169,36 +169,36 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - **Validates: Requirements 3.1, 3.2**
 
 - [ ] 13. Android — Shopping List Page
-  - [~] 13.1 Implement ShoppingListViewModel and ShoppingListPage composable
+  - [ ] 13.1 Implement ShoppingListViewModel and ShoppingListPage composable
     - Create `ShoppingListViewModel`: derive shopping list as `products.filter { it.idealQty > it.currentQty }`, compute buyQty, group by category sortOrder, sort alphabetically within groups
     - Create `ShoppingListPage` composable: grouped list with +1 buttons, recompute within 100ms of data change, empty-state message, uncategorized group at end
     - Handle scan on Shopping List: increment if known EAN, error if unknown (no quick-create)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
 - [ ] 14. Android — Setup Page (Products & Categories)
-  - [~] 14.1 Implement SetupViewModel and SetupPage composable
+  - [ ] 14.1 Implement SetupViewModel and SetupPage composable
     - Create `SetupViewModel`: product CRUD operations, category CRUD, drag-to-reorder categories (batch update sortOrder within 3s)
     - Create `SetupPage` composable: product list with edit/delete, category list with drag-reorder, create product form (name 1–100 chars, idealQty 1–9999, category picker), create category form (name 1–50 chars), delete category with reassignment dialog, prevent deletion of last category
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
 - [ ] 15. Android — Scanner Integration
-  - [~] 15.1 Implement ScannerService and scanner overlay
+  - [-] 15.1 Implement ScannerService and scanner overlay
     - Create `ScannerService`: ML Kit barcode scanner for EAN-13/EAN-8, on-device only, camera lifecycle management, 10s timeout with retry/cancel
     - Create scanner overlay composable (shared between Home and Shopping List)
     - _Requirements: 4.1, 4.2, 4.4_
 
-  - [~] 15.2 Implement quick-create product flow
+  - [ ] 15.2 Implement quick-create product flow
     - Create quick-create bottom sheet: pre-populated EAN, require name (1–100 chars), idealQty (1–999), category selection → POST to backend → add locally
     - _Requirements: 4.3, 1.8_
 
 - [ ] 16. Android — Settings Page
-  - [~] 16.1 Implement SettingsViewModel and SettingsPage composable
+  - [ ] 16.1 Implement SettingsViewModel and SettingsPage composable
     - Create `SettingsViewModel`: account info, language override, share code generation, history loading (paginated, 50 per page)
     - Create `SettingsPage` composable: account section, language picker (en/pt/es/fr), share code generation + display, history list (product name, signed delta, user name, relative/absolute timestamp), leave household
     - _Requirements: 7.1, 7.6, 10.3, 10.4, 10.5, 10.6, 11.2_
 
 - [ ] 17. Android — Offline Sync & Reconciliation
-  - [~] 17.1 Wire WorkManager scheduling and connectivity monitoring
+  - [ ] 17.1 Wire WorkManager scheduling and connectivity monitoring
     - Register `OutboxWorker` with connectivity constraint, periodic reconciliation on app foreground
     - Handle sync capacity warning (>500 pending events), failed event notification
     - Ensure outbox persists across app restarts/reboots
@@ -213,7 +213,7 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - **Validates: Requirements 8.6**
 
 - [ ] 18. Android — Internationalization
-  - [~] 18.1 Set up string resources and locale override mechanism
+  - [ ] 18.1 Set up string resources and locale override mechanism
     - Create `values/strings.xml` (en), `values-pt/strings.xml`, `values-es/strings.xml`, `values-fr/strings.xml` with all UI strings
     - Implement `LocaleManager` with DataStore, apply via `AppCompatDelegate.setApplicationLocales()` (Android 13+) and `createConfigurationContext()` (pre-13)
     - Verify no hardcoded strings in composables, test 320dp minimum width
@@ -224,7 +224,7 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create `ReabastrTheme` composable: dynamic color on Android 12+, fallback brand palette (warm green primary + neutral surfaces), dark and light color schemes, typography
     - _Requirements: tech stack (Material 3, dark + light themes)_
 
-- [~] 20. Final Checkpoint — All tests pass, full integration verified
+- [ ] 20. Final Checkpoint — All tests pass, full integration verified
   - Ensure all tests pass (Python pytest + Kotlin unit tests), ask the user if questions arise.
 
 ## Notes
