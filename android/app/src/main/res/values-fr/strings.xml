@@ -33,6 +33,16 @@
     <string name="scanner_permission_message">L\'accès à la caméra est nécessaire pour scanner les codes-barres. Veuillez accorder l\'autorisation pour continuer.</string>
     <string name="scanner_grant_permission">Accorder l\'autorisation</string>
 
+    <!-- Shopping List -->
+    <string name="shopping_title">Liste de courses</string>
+    <string name="shopping_scan_button_description">Scanner un code-barres pour réapprovisionner</string>
+    <string name="shopping_increment_description">Réapprovisionner un %1$s</string>
+    <string name="shopping_buy_qty">À acheter\u00a0: %1$d</string>
+    <string name="shopping_uncategorized">Sans catégorie</string>
+    <string name="shopping_empty_title">Tout est en stock</string>
+    <string name="shopping_empty_subtitle">Rien à acheter pour le moment. Les articles apparaîtront ici quand le stock passera sous l\'idéal.</string>
+    <string name="shopping_unrecognized_ean">Code-barres non reconnu — produit introuvable dans votre foyer</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurez votre foyer</string>
     <string name="onboard_subtitle">Créez un nouveau foyer ou rejoignez-en un existant avec un code de partage.</string>

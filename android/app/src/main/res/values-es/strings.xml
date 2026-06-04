@@ -33,6 +33,16 @@
     <string name="scanner_permission_message">Se necesita acceso a la cámara para escanear códigos de barras. Por favor conceda el permiso para continuar.</string>
     <string name="scanner_grant_permission">Conceder permiso</string>
 
+    <!-- Shopping List -->
+    <string name="shopping_title">Lista de compras</string>
+    <string name="shopping_scan_button_description">Escanear código de barras para reponer</string>
+    <string name="shopping_increment_description">Reponer un %1$s</string>
+    <string name="shopping_buy_qty">Comprar: %1$d</string>
+    <string name="shopping_uncategorized">Sin categoría</string>
+    <string name="shopping_empty_title">Todo abastecido</string>
+    <string name="shopping_empty_subtitle">Nada que comprar ahora. Los artículos aparecerán aquí cuando el stock baje del ideal.</string>
+    <string name="shopping_unrecognized_ean">Código de barras no reconocido — producto no encontrado en tu hogar</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configura tu hogar</string>
     <string name="onboard_subtitle">Crea un nuevo hogar o únete a uno existente con un código de invitación.</string>

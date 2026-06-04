@@ -33,6 +33,16 @@
     <string name="scanner_permission_message">Camera access is needed to scan barcodes. Please grant the permission to continue.</string>
     <string name="scanner_grant_permission">Grant permission</string>
 
+    <!-- Shopping List -->
+    <string name="shopping_title">Shopping list</string>
+    <string name="shopping_scan_button_description">Scan barcode to restock</string>
+    <string name="shopping_increment_description">Restock one %1$s</string>
+    <string name="shopping_buy_qty">Need to buy: %1$d</string>
+    <string name="shopping_uncategorized">Uncategorized</string>
+    <string name="shopping_empty_title">All stocked up</string>
+    <string name="shopping_empty_subtitle">Nothing to buy right now. Items will appear here when stock drops below ideal.</string>
+    <string name="shopping_unrecognized_ean">Barcode not recognized — product not found in your household</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Set up your household</string>
     <string name="onboard_subtitle">Create a new household or join an existing one with a share code.</string>

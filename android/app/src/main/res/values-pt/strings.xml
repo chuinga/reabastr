@@ -33,6 +33,16 @@
     <string name="scanner_permission_message">O acesso à câmara é necessário para ler códigos de barras. Por favor conceda a permissão para continuar.</string>
     <string name="scanner_grant_permission">Conceder permissão</string>
 
+    <!-- Shopping List -->
+    <string name="shopping_title">Lista de compras</string>
+    <string name="shopping_scan_button_description">Ler código de barras para repor</string>
+    <string name="shopping_increment_description">Repor um %1$s</string>
+    <string name="shopping_buy_qty">Comprar: %1$d</string>
+    <string name="shopping_uncategorized">Sem categoria</string>
+    <string name="shopping_empty_title">Tudo abastecido</string>
+    <string name="shopping_empty_subtitle">Nada para comprar agora. Os itens aparecerão aqui quando o stock ficar abaixo do ideal.</string>
+    <string name="shopping_unrecognized_ean">Código de barras não reconhecido — produto não encontrado no seu lar</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurar o seu lar</string>
     <string name="onboard_subtitle">Crie um novo lar ou junte-se a um existente com um código de partilha.</string>
