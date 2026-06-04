@@ -124,6 +124,9 @@ dependencies {
     // DataStore (Preferences)
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
+    // Reorderable LazyList (drag-to-reorder)
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 

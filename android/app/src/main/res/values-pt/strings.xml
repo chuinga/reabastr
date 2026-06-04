@@ -43,6 +43,41 @@
     <string name="shopping_empty_subtitle">Nada para comprar agora. Os itens aparecerão aqui quando o stock ficar abaixo do ideal.</string>
     <string name="shopping_unrecognized_ean">Código de barras não reconhecido — produto não encontrado no seu lar</string>
 
+    <!-- Setup -->
+    <string name="setup_title">Configuração</string>
+    <string name="setup_tab_products">Produtos</string>
+    <string name="setup_tab_categories">Categorias</string>
+    <string name="setup_create_product_title">Adicionar produto</string>
+    <string name="setup_product_name_label">Nome do produto</string>
+    <string name="setup_product_name_error">O nome deve ter entre 1 e 100 caracteres</string>
+    <string name="setup_product_ideal_qty_label">Quantidade ideal</string>
+    <string name="setup_product_ideal_qty_error">A quantidade deve ser entre 1 e 9999</string>
+    <string name="setup_category_picker_label">Categoria</string>
+    <string name="setup_category_picker_error">Por favor selecione uma categoria</string>
+    <string name="setup_create_product_button">Adicionar produto</string>
+    <string name="setup_products_header">Os seus produtos</string>
+    <string name="setup_products_empty">Sem produtos. Adicione um acima.</string>
+    <string name="setup_product_details">Ideal: %1$d · %2$s</string>
+    <string name="setup_edit_product_description">Editar %1$s</string>
+    <string name="setup_delete_product_description">Apagar %1$s</string>
+    <string name="setup_edit_product_title">Editar produto</string>
+    <string name="setup_save">Guardar</string>
+    <string name="setup_cancel">Cancelar</string>
+    <string name="setup_delete">Apagar</string>
+    <string name="setup_create_category_title">Adicionar categoria</string>
+    <string name="setup_category_name_label">Nome da categoria</string>
+    <string name="setup_category_name_error">O nome deve ter entre 1 e 50 caracteres</string>
+    <string name="setup_categories_header">As suas categorias</string>
+    <string name="setup_categories_empty">Sem categorias. Adicione uma acima.</string>
+    <string name="setup_drag_handle_description">Arrastar para reordenar</string>
+    <string name="setup_delete_category_description">Apagar %1$s</string>
+    <string name="setup_delete_category_title">Apagar categoria</string>
+    <string name="setup_delete_category_reassign_message">"%1$s" tem %2$d produto(s). Escolha uma categoria para os mover:</string>
+    <string name="setup_delete_category_confirm_message">Apagar categoria "%1$s"?</string>
+    <string name="setup_last_category_error">Não é possível apagar a última categoria</string>
+    <string name="setup_product_created">Produto criado</string>
+    <string name="setup_category_created">Categoria criada</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurar o seu lar</string>
     <string name="onboard_subtitle">Crie um novo lar ou junte-se a um existente com um código de partilha.</string>

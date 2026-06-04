@@ -43,6 +43,41 @@
     <string name="shopping_empty_subtitle">Nothing to buy right now. Items will appear here when stock drops below ideal.</string>
     <string name="shopping_unrecognized_ean">Barcode not recognized — product not found in your household</string>
 
+    <!-- Setup -->
+    <string name="setup_title">Setup</string>
+    <string name="setup_tab_products">Products</string>
+    <string name="setup_tab_categories">Categories</string>
+    <string name="setup_create_product_title">Add product</string>
+    <string name="setup_product_name_label">Product name</string>
+    <string name="setup_product_name_error">Name must be 1–100 characters</string>
+    <string name="setup_product_ideal_qty_label">Ideal quantity</string>
+    <string name="setup_product_ideal_qty_error">Quantity must be 1–9999</string>
+    <string name="setup_category_picker_label">Category</string>
+    <string name="setup_category_picker_error">Please select a category</string>
+    <string name="setup_create_product_button">Add product</string>
+    <string name="setup_products_header">Your products</string>
+    <string name="setup_products_empty">No products yet. Add one above.</string>
+    <string name="setup_product_details">Ideal: %1$d · %2$s</string>
+    <string name="setup_edit_product_description">Edit %1$s</string>
+    <string name="setup_delete_product_description">Delete %1$s</string>
+    <string name="setup_edit_product_title">Edit product</string>
+    <string name="setup_save">Save</string>
+    <string name="setup_cancel">Cancel</string>
+    <string name="setup_delete">Delete</string>
+    <string name="setup_create_category_title">Add category</string>
+    <string name="setup_category_name_label">Category name</string>
+    <string name="setup_category_name_error">Name must be 1–50 characters</string>
+    <string name="setup_categories_header">Your categories</string>
+    <string name="setup_categories_empty">No categories yet. Add one above.</string>
+    <string name="setup_drag_handle_description">Drag to reorder</string>
+    <string name="setup_delete_category_description">Delete %1$s</string>
+    <string name="setup_delete_category_title">Delete category</string>
+    <string name="setup_delete_category_reassign_message">"%1$s" has %2$d product(s). Choose a category to move them to:</string>
+    <string name="setup_delete_category_confirm_message">Delete category "%1$s"?</string>
+    <string name="setup_last_category_error">Cannot delete the last category</string>
+    <string name="setup_product_created">Product created</string>
+    <string name="setup_category_created">Category created</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Set up your household</string>
     <string name="onboard_subtitle">Create a new household or join an existing one with a share code.</string>
