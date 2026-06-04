@@ -91,6 +91,28 @@
     <string name="quick_create_cancel">Cancelar</string>
     <string name="quick_create_success">Producto creado</string>
 
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_sign_out">Cerrar sesión</string>
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_language_system_default">Predeterminado del sistema</string>
+    <string name="settings_share_title">Compartir hogar</string>
+    <string name="settings_share_generate">Generar código de invitación</string>
+    <string name="settings_share_regenerate">Generar nuevo código</string>
+    <string name="settings_share_copy">Copiar código</string>
+    <string name="settings_share_expires">Expira: %1$s</string>
+    <string name="settings_history_title">Historial</string>
+    <string name="settings_history_empty">Sin historial</string>
+    <string name="settings_history_attribution">por %1$s</string>
+    <string name="settings_history_error">No se pudo cargar el historial</string>
+    <string name="settings_history_retry">Reintentar</string>
+    <string name="settings_history_load_more">Cargar más</string>
+    <string name="settings_leave_household">Abandonar hogar</string>
+    <string name="settings_leave_dialog_title">¿Abandonar hogar?</string>
+    <string name="settings_leave_dialog_message">Perderás el acceso al inventario de este hogar. Puedes unirte a otro hogar con un nuevo código de invitación.</string>
+    <string name="settings_leave_dialog_confirm">Abandonar</string>
+    <string name="settings_leave_dialog_cancel">Cancelar</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configura tu hogar</string>
     <string name="onboard_subtitle">Crea un nuevo hogar o únete a uno existente con un código de invitación.</string>

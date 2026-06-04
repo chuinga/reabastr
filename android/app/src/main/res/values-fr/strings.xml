@@ -91,6 +91,28 @@
     <string name="quick_create_cancel">Annuler</string>
     <string name="quick_create_success">Produit créé</string>
 
+    <!-- Settings -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_sign_out">Se déconnecter</string>
+    <string name="settings_language_title">Langue</string>
+    <string name="settings_language_system_default">Par défaut du système</string>
+    <string name="settings_share_title">Partager le foyer</string>
+    <string name="settings_share_generate">Générer un code de partage</string>
+    <string name="settings_share_regenerate">Générer un nouveau code</string>
+    <string name="settings_share_copy">Copier le code</string>
+    <string name="settings_share_expires">Expire\u00a0: %1$s</string>
+    <string name="settings_history_title">Historique</string>
+    <string name="settings_history_empty">Aucun historique</string>
+    <string name="settings_history_attribution">par %1$s</string>
+    <string name="settings_history_error">Impossible de charger l\'historique</string>
+    <string name="settings_history_retry">Réessayer</string>
+    <string name="settings_history_load_more">Charger plus</string>
+    <string name="settings_leave_household">Quitter le foyer</string>
+    <string name="settings_leave_dialog_title">Quitter le foyer\u00a0?</string>
+    <string name="settings_leave_dialog_message">Vous perdrez l\'accès à l\'inventaire de ce foyer. Vous pourrez rejoindre un autre foyer avec un nouveau code de partage.</string>
+    <string name="settings_leave_dialog_confirm">Quitter</string>
+    <string name="settings_leave_dialog_cancel">Annuler</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurez votre foyer</string>
     <string name="onboard_subtitle">Créez un nouveau foyer ou rejoignez-en un existant avec un code de partage.</string>

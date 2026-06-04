@@ -91,6 +91,28 @@
     <string name="quick_create_cancel">Cancel</string>
     <string name="quick_create_success">Product created</string>
 
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_system_default">System default</string>
+    <string name="settings_share_title">Share household</string>
+    <string name="settings_share_generate">Generate share code</string>
+    <string name="settings_share_regenerate">Generate new code</string>
+    <string name="settings_share_copy">Copy code</string>
+    <string name="settings_share_expires">Expires: %1$s</string>
+    <string name="settings_history_title">History</string>
+    <string name="settings_history_empty">No history yet</string>
+    <string name="settings_history_attribution">by %1$s</string>
+    <string name="settings_history_error">Could not load history</string>
+    <string name="settings_history_retry">Retry</string>
+    <string name="settings_history_load_more">Load more</string>
+    <string name="settings_leave_household">Leave household</string>
+    <string name="settings_leave_dialog_title">Leave household?</string>
+    <string name="settings_leave_dialog_message">You will lose access to this household\'s inventory. You can join another household with a new share code.</string>
+    <string name="settings_leave_dialog_confirm">Leave</string>
+    <string name="settings_leave_dialog_cancel">Cancel</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Set up your household</string>
     <string name="onboard_subtitle">Create a new household or join an existing one with a share code.</string>
