@@ -12,6 +12,27 @@
     <string name="sign_in_show_password">Afficher le mot de passe</string>
     <string name="sign_in_hide_password">Masquer le mot de passe</string>
 
+    <!-- Home (Take from Stock) -->
+    <string name="home_title">Retirer du stock</string>
+    <string name="home_scan_button_description">Scanner un code-barres</string>
+    <string name="home_decrement_description">Retirer un %1$s du stock</string>
+    <string name="home_product_qty">%1$d sur %2$d en stock</string>
+    <string name="home_out_of_stock_message">Rupture de stock — impossible de retirer</string>
+    <string name="home_out_of_stock_inline">Rupture de stock</string>
+    <string name="home_empty_title">Aucun produit</string>
+    <string name="home_empty_subtitle">Ajoutez des produits dans Configuration, puis scannez ou appuyez pour retirer du stock.</string>
+
+    <!-- Scanner -->
+    <string name="scanner_close">Fermer le scanner</string>
+    <string name="scanner_instruction">Pointez la caméra vers un code-barres</string>
+    <string name="scanner_timeout_title">Scan échoué</string>
+    <string name="scanner_timeout_message">Aucun code-barres n\'a été détecté. Assurez-vous que le code est dans le cadre et bien éclairé.</string>
+    <string name="scanner_retry">Réessayer</string>
+    <string name="scanner_cancel">Annuler</string>
+    <string name="scanner_permission_title">Autorisation caméra requise</string>
+    <string name="scanner_permission_message">L\'accès à la caméra est nécessaire pour scanner les codes-barres. Veuillez accorder l\'autorisation pour continuer.</string>
+    <string name="scanner_grant_permission">Accorder l\'autorisation</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurez votre foyer</string>
     <string name="onboard_subtitle">Créez un nouveau foyer ou rejoignez-en un existant avec un code de partage.</string>

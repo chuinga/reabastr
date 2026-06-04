@@ -158,8 +158,8 @@ This plan follows the prescribed build order: Bootstrap Terraform → Core Infra
     - Create Retrofit interface with all backend endpoints, JWT Bearer interceptor, structured error parsing
     - _Requirements: 9.4, 9.7_
 
-- [ ] 12. Android — Home Page (Take from Stock)
-  - [-] 12.1 Implement HomeViewModel and HomePage composable
+- [x] 12. Android — Home Page (Take from Stock)
+  - [x] 12.1 Implement HomeViewModel and HomePage composable
     - Create `HomeViewModel` with product list state, decrement action (local Room update + outbox enqueue), scan result handling (EAN lookup → decrement or trigger quick-create)
     - Create `HomePage` composable: product list with −1 buttons, out-of-stock guard (prevent decrement at qty 0, show message 3s), scan FAB
     - _Requirements: 1.1, 1.2, 1.3, 1.6, 1.8, 1.9_

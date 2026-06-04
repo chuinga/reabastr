@@ -12,6 +12,27 @@
     <string name="sign_in_show_password">Mostrar palavra-passe</string>
     <string name="sign_in_hide_password">Ocultar palavra-passe</string>
 
+    <!-- Home (Take from Stock) -->
+    <string name="home_title">Retirar do stock</string>
+    <string name="home_scan_button_description">Ler código de barras</string>
+    <string name="home_decrement_description">Retirar um %1$s do stock</string>
+    <string name="home_product_qty">%1$d de %2$d em stock</string>
+    <string name="home_out_of_stock_message">Sem stock — não é possível retirar mais</string>
+    <string name="home_out_of_stock_inline">Sem stock</string>
+    <string name="home_empty_title">Sem produtos</string>
+    <string name="home_empty_subtitle">Adicione produtos em Configuração e depois leia ou toque para retirar do stock.</string>
+
+    <!-- Scanner -->
+    <string name="scanner_close">Fechar scanner</string>
+    <string name="scanner_instruction">Aponte a câmara para um código de barras</string>
+    <string name="scanner_timeout_title">Leitura sem sucesso</string>
+    <string name="scanner_timeout_message">Nenhum código de barras foi detetado. Certifique-se de que o código está dentro do enquadramento e bem iluminado.</string>
+    <string name="scanner_retry">Tentar novamente</string>
+    <string name="scanner_cancel">Cancelar</string>
+    <string name="scanner_permission_title">Permissão de câmara necessária</string>
+    <string name="scanner_permission_message">O acesso à câmara é necessário para ler códigos de barras. Por favor conceda a permissão para continuar.</string>
+    <string name="scanner_grant_permission">Conceder permissão</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configurar o seu lar</string>
     <string name="onboard_subtitle">Crie um novo lar ou junte-se a um existente com um código de partilha.</string>

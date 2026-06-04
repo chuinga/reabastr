@@ -12,6 +12,27 @@
     <string name="sign_in_show_password">Mostrar contraseña</string>
     <string name="sign_in_hide_password">Ocultar contraseña</string>
 
+    <!-- Home (Take from Stock) -->
+    <string name="home_title">Retirar del stock</string>
+    <string name="home_scan_button_description">Escanear código de barras</string>
+    <string name="home_decrement_description">Retirar un %1$s del stock</string>
+    <string name="home_product_qty">%1$d de %2$d en stock</string>
+    <string name="home_out_of_stock_message">Sin stock — no se puede retirar más</string>
+    <string name="home_out_of_stock_inline">Sin stock</string>
+    <string name="home_empty_title">Sin productos</string>
+    <string name="home_empty_subtitle">Añade productos en Configuración y luego escanea o toca para retirar del stock.</string>
+
+    <!-- Scanner -->
+    <string name="scanner_close">Cerrar escáner</string>
+    <string name="scanner_instruction">Apunte la cámara al código de barras</string>
+    <string name="scanner_timeout_title">Escaneo sin éxito</string>
+    <string name="scanner_timeout_message">No se detectó ningún código de barras. Asegúrese de que el código esté dentro del marco y bien iluminado.</string>
+    <string name="scanner_retry">Reintentar</string>
+    <string name="scanner_cancel">Cancelar</string>
+    <string name="scanner_permission_title">Permiso de cámara requerido</string>
+    <string name="scanner_permission_message">Se necesita acceso a la cámara para escanear códigos de barras. Por favor conceda el permiso para continuar.</string>
+    <string name="scanner_grant_permission">Conceder permiso</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Configura tu hogar</string>
     <string name="onboard_subtitle">Crea un nuevo hogar o únete a uno existente con un código de invitación.</string>

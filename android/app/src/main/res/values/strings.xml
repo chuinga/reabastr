@@ -12,6 +12,27 @@
     <string name="sign_in_show_password">Show password</string>
     <string name="sign_in_hide_password">Hide password</string>
 
+    <!-- Home (Take from Stock) -->
+    <string name="home_title">Take from stock</string>
+    <string name="home_scan_button_description">Scan barcode</string>
+    <string name="home_decrement_description">Take one %1$s from stock</string>
+    <string name="home_product_qty">%1$d of %2$d in stock</string>
+    <string name="home_out_of_stock_message">Out of stock — cannot take more</string>
+    <string name="home_out_of_stock_inline">Out of stock</string>
+    <string name="home_empty_title">No products yet</string>
+    <string name="home_empty_subtitle">Add products in Setup, then scan or tap to take from stock.</string>
+
+    <!-- Scanner -->
+    <string name="scanner_close">Close scanner</string>
+    <string name="scanner_instruction">Point camera at a barcode</string>
+    <string name="scanner_timeout_title">Scan unsuccessful</string>
+    <string name="scanner_timeout_message">No barcode was detected. Make sure the barcode is within the frame and well lit.</string>
+    <string name="scanner_retry">Retry</string>
+    <string name="scanner_cancel">Cancel</string>
+    <string name="scanner_permission_title">Camera permission required</string>
+    <string name="scanner_permission_message">Camera access is needed to scan barcodes. Please grant the permission to continue.</string>
+    <string name="scanner_grant_permission">Grant permission</string>
+
     <!-- Onboarding -->
     <string name="onboard_title">Set up your household</string>
     <string name="onboard_subtitle">Create a new household or join an existing one with a share code.</string>

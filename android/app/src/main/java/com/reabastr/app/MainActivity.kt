@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.reabastr.app.auth.AuthState
 import com.reabastr.app.auth.AuthViewModel
 import com.reabastr.app.auth.SignInScreen
+import com.reabastr.app.home.HomePage
+import com.reabastr.app.home.HomeViewModel
 import com.reabastr.app.onboarding.OnboardScreen
 import com.reabastr.app.onboarding.OnboardState
 import com.reabastr.app.onboarding.OnboardViewModel
@@ -123,18 +126,27 @@ private fun AuthenticatedContent() {
             OnboardScreen(viewModel = onboardViewModel)
         }
         is OnboardState.HasHousehold -> {
-            // Main app content — will be wired with navigation in later tasks
-            MainAppPlaceholder()
+            val householdId = (onboardState as OnboardState.HasHousehold).householdId
+            MainAppContent(householdId = householdId)
         }
     }
 }
 
+/**
+ * Main app content after authentication and onboarding are complete.
+ * Currently shows the Home page (Take from Stock).
+ */
 @Composable
-private fun MainAppPlaceholder() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Main App — Coming Soon")
+private fun MainAppContent(householdId: String) {
+    val homeViewModel: HomeViewModel = hiltViewModel()
+
+    LaunchedEffect(householdId) {
+        homeViewModel.setHouseholdId(householdId)
     }
+
+    HomePage(
+        viewModel = homeViewModel,
+        onNavigateToQuickCreate = { /* Will be wired in task 15.2 */ },
+        onOpenScanner = { /* Will be wired in task 15.1 */ }
+    )
 }
