@@ -43,6 +43,10 @@
 ## User Testing
 - As soon as something is testable (even basic smoke tests), **stop and ask the user to
   verify** before moving on. Don't wait for a checkpoint task.
+- **At every step that touches UI, ask the user to test it on-device** — describe exactly
+  what screen to open, what action to perform, and what result to expect. Do not proceed
+  to the next task until the user confirms the UI works as intended.
 - For backend: provide the endpoint, sample curl command, or test instructions.
-- For Android: describe the screen/flow to exercise.
+- For Android: describe the screen/flow to exercise, including how to trigger the new UI
+  (e.g., "scan an unknown barcode on the Home page to see the quick-create sheet").
 - Prefer early, small verification loops over late, large ones.
