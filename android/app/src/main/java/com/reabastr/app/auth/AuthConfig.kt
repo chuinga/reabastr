@@ -7,8 +7,8 @@ package com.reabastr.app.auth
  */
 object AuthConfig {
     const val REGION = "eu-west-1"
-    const val USER_POOL_ID = "eu-west-1_PLACEHOLDER" // Replace after terraform apply
-    const val CLIENT_ID = "PLACEHOLDER" // Replace after terraform apply
+    const val USER_POOL_ID = "eu-west-1_ZRswNSk8l"
+    const val CLIENT_ID = "4fm03v1ivocpi0qdc42sblfgg5"
     const val DOMAIN = "reabastr.auth.eu-west-1.amazoncognito.com"
     const val REDIRECT_URI = "reabastr://callback"
     const val SIGN_OUT_URI = "reabastr://signout"

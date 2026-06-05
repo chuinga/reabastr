@@ -5,5 +5,5 @@ package com.reabastr.app.data.remote
  * Values match the deployed API Gateway in eu-west-1.
  */
 object ApiConfig {
-    const val BASE_URL = "https://3n1b65jcol.execute-api.eu-west-1.amazonaws.com/v1/"
+    const val BASE_URL = "https://ii7iuqvzek.execute-api.eu-west-1.amazonaws.com/v1/"
 }
