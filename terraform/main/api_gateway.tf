@@ -207,6 +207,7 @@ locals {
     products   = aws_lambda_function.functions["products"].invoke_arn
     adjust     = aws_lambda_function.functions["adjust"].invoke_arn
     categories = aws_lambda_function.functions["categories"].invoke_arn
+    eans       = aws_lambda_function.functions["eans"].invoke_arn
     households = aws_lambda_function.functions["households"].invoke_arn
     share_code = aws_lambda_function.functions["share_code"].invoke_arn
     history    = aws_lambda_function.functions["history"].invoke_arn
@@ -396,6 +397,14 @@ resource "aws_lambda_permission" "apigw_sync" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.functions["sync"].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "apigw_eans" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.functions["eans"].function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
 }
