@@ -7,6 +7,7 @@ locals {
     "products",
     "adjust",
     "categories",
+    "eans",
     "households",
     "share_code",
     "history",

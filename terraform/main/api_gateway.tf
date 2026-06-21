@@ -170,9 +170,9 @@ locals {
     categories_id_delete = { resource_id = aws_api_gateway_resource.categories_id.id, method = "DELETE", lambda = "categories" }
     categories_reorder   = { resource_id = aws_api_gateway_resource.categories_reorder.id, method = "PUT", lambda = "categories" }
     # EAN Mappings
-    eans_post   = { resource_id = aws_api_gateway_resource.products_id_eans.id, method = "POST", lambda = "products" }
-    eans_delete = { resource_id = aws_api_gateway_resource.products_id_eans_ean.id, method = "DELETE", lambda = "products" }
-    eans_get    = { resource_id = aws_api_gateway_resource.eans_ean.id, method = "GET", lambda = "products" }
+    eans_post   = { resource_id = aws_api_gateway_resource.products_id_eans.id, method = "POST", lambda = "eans" }
+    eans_delete = { resource_id = aws_api_gateway_resource.products_id_eans_ean.id, method = "DELETE", lambda = "eans" }
+    eans_get    = { resource_id = aws_api_gateway_resource.eans_ean.id, method = "GET", lambda = "eans" }
     # Households & Sharing
     household_get        = { resource_id = aws_api_gateway_resource.household.id, method = "GET", lambda = "households" }
     household_post       = { resource_id = aws_api_gateway_resource.household.id, method = "POST", lambda = "households" }
