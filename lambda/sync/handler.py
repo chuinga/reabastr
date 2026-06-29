@@ -76,20 +76,34 @@ def _handle_get_sync(hh_id: str) -> dict[str, Any]:
 
     for item in items:
         sk: str = item.get("SK", "")
-        # Remove internal keys from response
-        clean = {k: v for k, v in item.items() if k not in ("PK",)}
 
         if sk == "#META":
-            household = clean
+            household = {k: v for k, v in item.items() if k not in ("PK",)}
         elif sk.startswith("PROD#"):
-            products.append(clean)
+            products.append({
+                "productId": sk.removeprefix("PROD#"),
+                "name": item.get("name", ""),
+                "categoryId": item.get("categoryId"),
+                "idealQty": item.get("idealQty", 0),
+                "currentQty": item.get("currentQty", 0),
+                "eans": item.get("eans", []),
+                "refs": item.get("refs", []),
+                "createdAt": item.get("createdAt"),
+            })
         elif sk.startswith("CAT#"):
-            categories.append(clean)
+            categories.append({
+                "categoryId": sk.removeprefix("CAT#"),
+                "name": item.get("name", ""),
+                "sortOrder": item.get("sortOrder", 0),
+            })
         elif sk.startswith("EAN#"):
-            ean_mappings.append(clean)
+            ean_mappings.append({k: v for k, v in item.items() if k not in ("PK",)})
         elif sk.startswith("MBR#"):
-            members.append(clean)
+            members.append({k: v for k, v in item.items() if k not in ("PK",)})
         # Skip HIST# and SHARE# items — not needed for sync
+
+    # Categories sorted by store-aisle order
+    categories.sort(key=lambda c: c.get("sortOrder", 0))
 
     return _response(200, {
         "products": products,

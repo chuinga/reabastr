@@ -86,6 +86,7 @@ def _create_product(hh_id: str, body: dict[str, Any]) -> dict[str, Any]:
     category_id = body["categoryId"]
     ideal_qty = validate_integer_range(body["idealQty"], "idealQty", min_val=1, max_val=9999)
     eans = _validate_eans_list(body.get("eans", []))
+    refs = _validate_refs_list(body.get("refs", []))
 
     # Validate category exists in household
     _assert_category_exists(hh_id, category_id)
@@ -108,6 +109,7 @@ def _create_product(hh_id: str, body: dict[str, Any]) -> dict[str, Any]:
         "idealQty": ideal_qty,
         "currentQty": 0,
         "eans": eans,
+        "refs": refs,
         "createdAt": now,
     }
     table.put_item(Item=item)
@@ -129,6 +131,7 @@ def _create_product(hh_id: str, body: dict[str, Any]) -> dict[str, Any]:
         "idealQty": ideal_qty,
         "currentQty": 0,
         "eans": eans,
+        "refs": refs,
         "createdAt": now,
     })
 
@@ -155,15 +158,23 @@ def _update_product(hh_id: str, product_id: str, body: dict[str, Any]) -> dict[s
         category_id = body["categoryId"]
         _assert_category_exists(hh_id, category_id)
 
+    refs = existing.get("refs", [])
+    set_clauses = ["#n = :name", "idealQty = :iq", "categoryId = :cid"]
+    expr_values: dict[str, Any] = {
+        ":name": name,
+        ":iq": ideal_qty,
+        ":cid": category_id,
+    }
+    if "refs" in body:
+        refs = _validate_refs_list(body["refs"])
+        set_clauses.append("refs = :refs")
+        expr_values[":refs"] = refs
+
     table.update_item(
         Key={"PK": f"HH#{hh_id}", "SK": f"PROD#{product_id}"},
-        UpdateExpression="SET #n = :name, idealQty = :iq, categoryId = :cid",
+        UpdateExpression="SET " + ", ".join(set_clauses),
         ExpressionAttributeNames={"#n": "name"},
-        ExpressionAttributeValues={
-            ":name": name,
-            ":iq": ideal_qty,
-            ":cid": category_id,
-        },
+        ExpressionAttributeValues=expr_values,
     )
 
     return _response(200, {
@@ -173,6 +184,7 @@ def _update_product(hh_id: str, product_id: str, body: dict[str, Any]) -> dict[s
         "idealQty": ideal_qty,
         "currentQty": existing["currentQty"],
         "eans": existing.get("eans", []),
+        "refs": refs,
     })
 
 
@@ -279,6 +291,34 @@ def _validate_eans_list(eans: Any) -> list[str]:
     return validated
 
 
+def _validate_refs_list(refs: Any) -> list[str]:
+    """Validate the refs field: optional list of free-form codes, max 20, each 1-64 chars."""
+    if not refs:
+        return []
+    if not isinstance(refs, list):
+        raise ValidationError("refs must be a list", details={"field": "refs"})
+    if len(refs) > 20:
+        raise ValidationError(
+            "A product may have at most 20 references",
+            details={"field": "refs", "max": 20},
+        )
+    validated: list[str] = []
+    seen: set[str] = set()
+    for i, ref in enumerate(refs):
+        if not isinstance(ref, str):
+            raise ValidationError("Each ref must be a string", details={"field": f"refs[{i}]"})
+        v = ref.strip()
+        if not v or len(v) > 64:
+            raise ValidationError(
+                "Each ref must be 1-64 characters",
+                details={"field": f"refs[{i}]"},
+            )
+        if v not in seen:
+            seen.add(v)
+            validated.append(v)
+    return validated
+
+
 def _format_product(item: dict[str, Any]) -> dict[str, Any]:
     """Format a DynamoDB product item for the API response."""
     return {
@@ -288,6 +328,7 @@ def _format_product(item: dict[str, Any]) -> dict[str, Any]:
         "idealQty": item["idealQty"],
         "currentQty": item.get("currentQty", 0),
         "eans": item.get("eans", []),
+        "refs": item.get("refs", []),
         "createdAt": item.get("createdAt"),
     }
 
