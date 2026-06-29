@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Adaptive-icon foreground: the Reabastr house outline, sized within the
-     icon safe zone. White strokes render over the colored icon background. -->
+<!--
+  Reabastr brand logo: a line-art house outline with a peaked roof, a central
+  door, and a small corner flag on the right roof slope. Drawn with strokes only
+  (transparent fill) and a white stroke so it can be tinted to any theme color.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -14,7 +17,7 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="#00000000"
-        android:pathData="M34,54 L54,37 L74,54" />
+        android:pathData="M28,52 L54,30 L80,52" />
 
     <!-- Corner flag on the right roof slope -->
     <path
@@ -23,7 +26,7 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="#00000000"
-        android:pathData="M61,40 L66,40 L66,45" />
+        android:pathData="M62,33 L68,33 L68,40" />
 
     <!-- House body: left wall, floor, right wall -->
     <path
@@ -32,7 +35,7 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="#00000000"
-        android:pathData="M38,52 L38,76 L70,76 L70,52" />
+        android:pathData="M33,50 L33,82 L75,82 L75,50" />
 
     <!-- Door -->
     <path
@@ -41,5 +44,5 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="#00000000"
-        android:pathData="M49,76 L49,62 L59,62 L59,76" />
+        android:pathData="M47,82 L47,63 L61,63 L61,82" />
 </vector>

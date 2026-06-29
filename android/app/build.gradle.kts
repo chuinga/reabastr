@@ -108,10 +108,10 @@ dependencies {
     // ML Kit Barcode Scanning
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
-    // CameraX (for barcode scanner)
-    implementation("androidx.camera:camera-camera2:1.3.4")
-    implementation("androidx.camera:camera-lifecycle:1.3.4")
-    implementation("androidx.camera:camera-view:1.3.4")
+    // CameraX (for barcode scanner) — 1.4.x ships 16 KB-aligned native libs
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
 
     // EncryptedSharedPreferences (Token Storage)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
@@ -119,8 +119,8 @@ dependencies {
     // Browser (Chrome Custom Tabs for OAuth)
     implementation("androidx.browser:browser:1.8.0")
 
-    // DataStore (Preferences)
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    // DataStore (Preferences) — 1.2.x ships a 16 KB-aligned shared-counter lib
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
 
     // Reorderable LazyList (drag-to-reorder)
     implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")

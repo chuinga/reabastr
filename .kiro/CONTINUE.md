@@ -2,50 +2,47 @@
 
 ## Current State
 
-The Android app fails to build with a KSP/JDK compatibility issue.
+The Android app **builds and runs on the emulator**. Sign-in works (Google OAuth +
+email/password). The four pages are wired behind a bottom navigation bar.
 
-**Versions:**
-- Kotlin: 2.2.10
-- KSP: 2.2.10-2.0.2
-- Gradle: 9.5.0
-- AGP: 9.2.1
-- JDK on machine: 22
+**Build:** `cd android && gradlew.bat assembleDebug` (JDK 17 / Corretto on PATH).
+**Install:** `%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe install -r app\build\outputs\apk\debug\app-debug.apk`
+(`adb` is not on PATH — use the full path above.)
 
-**Error:** `[ksp] java.lang.IllegalStateException: unexpected jvm signature V`
+**Versions:** Kotlin 2.2.10, KSP 2.2.10-2.0.2, Gradle 9.5.0, AGP 9.2.1, JDK 17.
+The earlier JDK 22 / KSP "unexpected jvm signature V" issue is resolved (JDK 17 active).
 
-## What Needs To Happen
+## Recent Work (this session)
 
-1. In Android Studio: **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JVM criteria → Version: 21**
-2. Sync and build
-3. If still failing, install JDK 21 on the machine (JDK 22 may not be compatible with this KSP version)
-4. Once building, run on the emulator — should see Sign-In screen
+1. Fixed OAuth callback handling — `OAuthCallbackHolder` is now Compose-observable
+   and the token exchange runs in a `LaunchedEffect` (previously the code was never
+   exchanged, so sign-in appeared to do nothing).
+2. Added bottom navigation (`nav/MainScaffold.kt`) wiring all four pages:
+   Take (Home), Buy (Shopping list), Setup, Settings.
+3. New auth flow: `WelcomeScreen` (logo + Log in / Sign up) → `SignInScreen` (with back)
+   or `SignUpScreen` (email/password registration + email-code confirmation via Cognito
+   SignUp/ConfirmSignUp/ResendConfirmationCode in `CognitoAuthService`).
+4. Home page now supports both **−1 (take)** and **+1 (put)** per product, plus a
+   manual **Add product** action (top-bar + and empty-state button). Quick-create sheet
+   now allows an optional/typed EAN (manual entry, not just camera scan).
+5. 16 KB page-size compatibility: bumped CameraX 1.3.4 → 1.4.2 and DataStore 1.1.1 → 1.2.1.
+   Verified all bundled `.so` files are now `p_align=16384`.
 
 ## Infrastructure Status
 
-- ✅ Terraform deployed (Cognito, DynamoDB, API Gateway, Lambda)
-- ✅ Cognito User Pool: `eu-west-1_ZRswNSk8l`
-- ✅ App Client ID: `4fm03v1ivocpi0qdc42sblfgg5`
-- ✅ API Gateway: `https://ii7iuqvzek.execute-api.eu-west-1.amazonaws.com/v1/`
-- ✅ AuthConfig.kt and ApiConfig.kt updated with real values
-- ✅ GitHub secrets configured: AWS_ACCOUNT_ID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+- Cognito User Pool: `eu-west-1_ZRswNSk8l`
+- App Client ID: `4fm03v1ivocpi0qdc42sblfgg5` (USER_PASSWORD_AUTH + Google enabled)
+- API Gateway: `https://ii7iuqvzek.execute-api.eu-west-1.amazonaws.com/v1/`
+- AWS profile: `miguel`, region eu-west-1, account 058264503354
 
-## GitHub Secrets (Repository secrets)
+## Known Notes
 
-- `AWS_ACCOUNT_ID`: 058264503354
-- `GOOGLE_CLIENT_ID`: (set by user)
-- `GOOGLE_CLIENT_SECRET`: (set by user)
+- Chrome on this emulator image crashes intermittently (`SIGILL`), which can make the
+  Google Custom Tab flow flaky. Email/password sign-in avoids the browser entirely.
+- Task 18 (i18n strings for pt/es/fr) still pending — new UI strings were added to the
+  default `values/strings.xml`; translations not yet added for the new keys.
 
-## AWS Profile
+## Remaining Spec Tasks
 
-- Profile name: `miguel`
-- Region: eu-west-1
-- Account: 058264503354
-
-## What Was Completed This Session
-
-1. Task 17.3 — Reconciliation consistency property test (ReconcileConsistencyPropertyTest.kt)
-2. Fixed Terraform workflow (version constraint, Google OAuth secrets passthrough)
-3. Fixed IAM deploy role (added Cognito domain permissions)
-4. Infrastructure deployed via GitHub Actions pipeline
-5. Updated Android AuthConfig.kt and ApiConfig.kt with real deployed values
-6. Fixed KSP version from 2.3.2 → 2.2.10-2.0.2 (matching Kotlin 2.2.10)
+- 18.1 — Internationalization string resources (pt/es/fr) for all UI incl. new strings.
+- 20 — Final checkpoint (all tests pass, full integration verified).

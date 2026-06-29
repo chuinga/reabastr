@@ -12,15 +12,47 @@
     <string name="sign_in_show_password">Show password</string>
     <string name="sign_in_hide_password">Hide password</string>
 
+    <!-- Bottom navigation -->
+    <string name="nav_home">Take</string>
+    <string name="nav_shopping">Buy</string>
+    <string name="nav_setup">Setup</string>
+    <string name="nav_settings">Settings</string>
+
     <!-- Home (Take from Stock) -->
-    <string name="home_title">Take from stock</string>
+    <string name="home_title">Stock</string>
     <string name="home_scan_button_description">Scan barcode</string>
     <string name="home_decrement_description">Take one %1$s from stock</string>
+    <string name="home_increment_description">Put one %1$s into stock</string>
     <string name="home_product_qty">%1$d of %2$d in stock</string>
     <string name="home_out_of_stock_message">Out of stock — cannot take more</string>
     <string name="home_out_of_stock_inline">Out of stock</string>
     <string name="home_empty_title">No products yet</string>
-    <string name="home_empty_subtitle">Add products in Setup, then scan or tap to take from stock.</string>
+    <string name="home_empty_subtitle">Add products below, then scan or tap +/− to adjust stock.</string>
+    <string name="home_add_manually">Add product</string>
+    <string name="home_enter_barcode_manually">Enter barcode manually</string>
+    <string name="home_scan_or_add">Scan or add</string>
+
+    <!-- Welcome -->
+    <string name="welcome_tagline">Your household inventory, always in sync.</string>
+    <string name="welcome_log_in">Log in</string>
+    <string name="welcome_sign_up">Sign up</string>
+    <string name="welcome_logo_description">Reabastr logo</string>
+
+    <!-- Sign Up -->
+    <string name="sign_up_title">Create your account</string>
+    <string name="sign_up_subtitle">Sign up with your email and a password.</string>
+    <string name="sign_up_name_label">Name (optional)</string>
+    <string name="sign_up_button">Create account</string>
+    <string name="sign_up_confirm_title">Confirm your email</string>
+    <string name="sign_up_confirm_subtitle">We sent a 6-digit code to %1$s. Enter it below to verify your account.</string>
+    <string name="sign_up_confirm_code_label">Verification code</string>
+    <string name="sign_up_confirm_button">Confirm</string>
+    <string name="sign_up_resend_code">Resend code</string>
+    <string name="sign_up_back_to_login">Back to log in</string>
+    <string name="sign_up_password_hint">At least 8 characters</string>
+
+    <!-- Common navigation -->
+    <string name="action_back">Back</string>
 
     <!-- Scanner -->
     <string name="scanner_close">Close scanner</string>
@@ -37,7 +69,10 @@
     <string name="shopping_title">Shopping list</string>
     <string name="shopping_scan_button_description">Scan barcode to restock</string>
     <string name="shopping_increment_description">Restock one %1$s</string>
+    <string name="shopping_decrement_description">Take one %1$s from stock</string>
     <string name="shopping_buy_qty">Need to buy: %1$d</string>
+    <string name="shopping_qty_ratio">%1$d/%2$d</string>
+    <string name="shopping_qty_ratio_description">%1$d in stock of %2$d needed</string>
     <string name="shopping_uncategorized">Uncategorized</string>
     <string name="shopping_empty_title">All stocked up</string>
     <string name="shopping_empty_subtitle">Nothing to buy right now. Items will appear here when stock drops below ideal.</string>
@@ -54,6 +89,10 @@
     <string name="setup_product_ideal_qty_error">Quantity must be 1–9999</string>
     <string name="setup_category_picker_label">Category</string>
     <string name="setup_category_picker_error">Please select a category</string>
+    <string name="setup_product_ean_label">Barcode (EAN)</string>
+    <string name="setup_product_ean_error">Barcode must be 8 or 13 digits</string>
+    <string name="setup_product_ref_label">Reference (ref)</string>
+    <string name="setup_product_identifiers_header">Barcodes &amp; references (optional)</string>
     <string name="setup_create_product_button">Add product</string>
     <string name="setup_products_header">Your products</string>
     <string name="setup_products_empty">No products yet. Add one above.</string>
@@ -70,6 +109,8 @@
     <string name="setup_categories_header">Your categories</string>
     <string name="setup_categories_empty">No categories yet. Add one above.</string>
     <string name="setup_drag_handle_description">Drag to reorder</string>
+    <string name="setup_move_up_description">Move %1$s up</string>
+    <string name="setup_move_down_description">Move %1$s down</string>
     <string name="setup_delete_category_description">Delete %1$s</string>
     <string name="setup_delete_category_title">Delete category</string>
     <string name="setup_delete_category_reassign_message">"%1$s" has %2$d product(s). Choose a category to move them to:</string>
@@ -81,6 +122,8 @@
     <!-- Quick Create Product -->
     <string name="quick_create_title">New product</string>
     <string name="quick_create_ean_label">Barcode (EAN)</string>
+    <string name="quick_create_ean_optional_label">Barcode (EAN) — optional</string>
+    <string name="quick_create_ean_error">Barcode must be 8 or 13 digits</string>
     <string name="quick_create_name_label">Product name</string>
     <string name="quick_create_name_error">Name must be 1–100 characters</string>
     <string name="quick_create_ideal_qty_label">Ideal quantity</string>
