@@ -31,9 +31,14 @@ data class SetupUiState(
     val productFormName: String = "",
     val productFormIdealQty: String = "",
     val productFormCategoryId: String? = null,
+    val productFormEans: List<String> = emptyList(),
+    val productFormEanInput: String = "",
+    val productFormRefs: List<String> = emptyList(),
+    val productFormRefInput: String = "",
     val productFormNameError: Boolean = false,
     val productFormIdealQtyError: Boolean = false,
     val productFormCategoryError: Boolean = false,
+    val productFormEanError: Boolean = false,
     // Category form state
     val categoryFormName: String = "",
     val categoryFormNameError: Boolean = false,
@@ -42,8 +47,13 @@ data class SetupUiState(
     val editProductName: String = "",
     val editProductIdealQty: String = "",
     val editProductCategoryId: String? = null,
+    val editProductEans: List<String> = emptyList(),
+    val editProductEanInput: String = "",
+    val editProductRefs: List<String> = emptyList(),
+    val editProductRefInput: String = "",
     val editProductNameError: Boolean = false,
     val editProductIdealQtyError: Boolean = false,
+    val editProductEanError: Boolean = false,
     // Delete category dialog
     val deletingCategory: CategoryEntity? = null,
     val reassignCategoryId: String? = null
@@ -139,6 +149,58 @@ class SetupViewModel @Inject constructor(
         )
     }
 
+    fun updateProductFormEanInput(ean: String) {
+        if (ean.all { it.isDigit() } && ean.length <= 13) {
+            _uiState.value = _uiState.value.copy(productFormEanInput = ean, productFormEanError = false)
+        }
+    }
+
+    fun addProductFormEan() {
+        val ean = _uiState.value.productFormEanInput.trim()
+        if (ean.isEmpty()) return
+        if (ean.length != 8 && ean.length != 13) {
+            _uiState.value = _uiState.value.copy(productFormEanError = true)
+            return
+        }
+        if (ean in _uiState.value.productFormEans) {
+            _uiState.value = _uiState.value.copy(productFormEanInput = "")
+            return
+        }
+        _uiState.value = _uiState.value.copy(
+            productFormEans = _uiState.value.productFormEans + ean,
+            productFormEanInput = "",
+            productFormEanError = false
+        )
+    }
+
+    fun removeProductFormEan(ean: String) {
+        _uiState.value = _uiState.value.copy(
+            productFormEans = _uiState.value.productFormEans - ean
+        )
+    }
+
+    fun updateProductFormRefInput(ref: String) {
+        _uiState.value = _uiState.value.copy(productFormRefInput = ref)
+    }
+
+    fun addProductFormRef() {
+        val ref = _uiState.value.productFormRefInput.trim()
+        if (ref.isEmpty() || ref in _uiState.value.productFormRefs) {
+            _uiState.value = _uiState.value.copy(productFormRefInput = "")
+            return
+        }
+        _uiState.value = _uiState.value.copy(
+            productFormRefs = _uiState.value.productFormRefs + ref,
+            productFormRefInput = ""
+        )
+    }
+
+    fun removeProductFormRef(ref: String) {
+        _uiState.value = _uiState.value.copy(
+            productFormRefs = _uiState.value.productFormRefs - ref
+        )
+    }
+
     /**
      * Validates and creates a new product.
      * Name: 1-100 chars, idealQty: 1-9999, category required.
@@ -167,7 +229,17 @@ class SetupViewModel @Inject constructor(
             hasError = true
         }
 
+        // Commit any pending EAN/ref still in the input boxes before validating.
+        addProductFormEan()
+        addProductFormRef()
+        val state2 = _uiState.value
+        // If the pending EAN was invalid, addProductFormEan flagged the error.
+        if (state2.productFormEanError) hasError = true
+
         if (hasError) return
+
+        val eans = state2.productFormEans
+        val refs = state2.productFormRefs
 
         viewModelScope.launch {
             val product = ProductEntity(
@@ -177,21 +249,31 @@ class SetupViewModel @Inject constructor(
                 categoryId = categoryId,
                 idealQty = idealQty!!,
                 currentQty = 0,
-                eans = emptyList(),
+                eans = eans,
+                refs = refs,
                 lastSyncedAt = 0L
             )
-            inventoryRepository.createProduct(product)
-
-            // Reset form
-            _uiState.value = _uiState.value.copy(
-                productFormName = "",
-                productFormIdealQty = "",
-                productFormCategoryId = null,
-                productFormNameError = false,
-                productFormIdealQtyError = false,
-                productFormCategoryError = false
+            inventoryRepository.createProduct(product).fold(
+                onSuccess = {
+                    _uiState.value = _uiState.value.copy(
+                        productFormName = "",
+                        productFormIdealQty = "",
+                        productFormCategoryId = null,
+                        productFormEans = emptyList(),
+                        productFormEanInput = "",
+                        productFormRefs = emptyList(),
+                        productFormRefInput = "",
+                        productFormNameError = false,
+                        productFormIdealQtyError = false,
+                        productFormCategoryError = false,
+                        productFormEanError = false
+                    )
+                    _events.emit(SetupEvent.ProductCreated)
+                },
+                onFailure = { e ->
+                    _events.emit(SetupEvent.ShowError(e.message ?: "Failed to create product"))
+                }
             )
-            _events.emit(SetupEvent.ProductCreated)
         }
     }
 
@@ -203,9 +285,62 @@ class SetupViewModel @Inject constructor(
             editProductName = product.name,
             editProductIdealQty = product.idealQty.toString(),
             editProductCategoryId = product.categoryId,
+            editProductEans = product.eans,
+            editProductEanInput = "",
+            editProductRefs = product.refs,
+            editProductRefInput = "",
             editProductNameError = false,
-            editProductIdealQtyError = false
+            editProductIdealQtyError = false,
+            editProductEanError = false
         )
+    }
+
+    fun updateEditProductEanInput(ean: String) {
+        if (ean.all { it.isDigit() } && ean.length <= 13) {
+            _uiState.value = _uiState.value.copy(editProductEanInput = ean, editProductEanError = false)
+        }
+    }
+
+    fun addEditProductEan() {
+        val ean = _uiState.value.editProductEanInput.trim()
+        if (ean.isEmpty()) return
+        if (ean.length != 8 && ean.length != 13) {
+            _uiState.value = _uiState.value.copy(editProductEanError = true)
+            return
+        }
+        if (ean in _uiState.value.editProductEans) {
+            _uiState.value = _uiState.value.copy(editProductEanInput = "")
+            return
+        }
+        _uiState.value = _uiState.value.copy(
+            editProductEans = _uiState.value.editProductEans + ean,
+            editProductEanInput = "",
+            editProductEanError = false
+        )
+    }
+
+    fun removeEditProductEan(ean: String) {
+        _uiState.value = _uiState.value.copy(editProductEans = _uiState.value.editProductEans - ean)
+    }
+
+    fun updateEditProductRefInput(ref: String) {
+        _uiState.value = _uiState.value.copy(editProductRefInput = ref)
+    }
+
+    fun addEditProductRef() {
+        val ref = _uiState.value.editProductRefInput.trim()
+        if (ref.isEmpty() || ref in _uiState.value.editProductRefs) {
+            _uiState.value = _uiState.value.copy(editProductRefInput = "")
+            return
+        }
+        _uiState.value = _uiState.value.copy(
+            editProductRefs = _uiState.value.editProductRefs + ref,
+            editProductRefInput = ""
+        )
+    }
+
+    fun removeEditProductRef(ref: String) {
+        _uiState.value = _uiState.value.copy(editProductRefs = _uiState.value.editProductRefs - ref)
     }
 
     fun dismissEditProduct() {
@@ -255,15 +390,29 @@ class SetupViewModel @Inject constructor(
 
         if (hasError) return
 
+        // Commit any pending EAN/ref still typed in the input boxes.
+        addEditProductEan()
+        addEditProductRef()
+        val committed = _uiState.value
+        if (committed.editProductEanError) return
+
         viewModelScope.launch {
             val updated = product.copy(
                 name = name,
                 idealQty = idealQty!!,
-                categoryId = categoryId
+                categoryId = categoryId,
+                eans = committed.editProductEans,
+                refs = committed.editProductRefs
             )
-            inventoryRepository.updateProduct(updated)
-            _uiState.value = _uiState.value.copy(editingProduct = null)
-            _events.emit(SetupEvent.ProductUpdated)
+            inventoryRepository.updateProduct(updated).fold(
+                onSuccess = {
+                    _uiState.value = _uiState.value.copy(editingProduct = null)
+                    _events.emit(SetupEvent.ProductUpdated)
+                },
+                onFailure = { e ->
+                    _events.emit(SetupEvent.ShowError(e.message ?: "Failed to update product"))
+                }
+            )
         }
     }
 
@@ -271,8 +420,12 @@ class SetupViewModel @Inject constructor(
 
     fun deleteProduct(productId: String) {
         viewModelScope.launch {
-            inventoryRepository.deleteProduct(productId)
-            _events.emit(SetupEvent.ProductDeleted)
+            inventoryRepository.deleteProduct(productId).fold(
+                onSuccess = { _events.emit(SetupEvent.ProductDeleted) },
+                onFailure = { e ->
+                    _events.emit(SetupEvent.ShowError(e.message ?: "Failed to delete product"))
+                }
+            )
         }
     }
 
@@ -308,13 +461,18 @@ class SetupViewModel @Inject constructor(
                 name = name,
                 sortOrder = nextSortOrder
             )
-            inventoryRepository.createCategory(category)
-
-            _uiState.value = _uiState.value.copy(
-                categoryFormName = "",
-                categoryFormNameError = false
+            inventoryRepository.createCategory(category).fold(
+                onSuccess = {
+                    _uiState.value = _uiState.value.copy(
+                        categoryFormName = "",
+                        categoryFormNameError = false
+                    )
+                    _events.emit(SetupEvent.CategoryCreated)
+                },
+                onFailure = { e ->
+                    _events.emit(SetupEvent.ShowError(e.message ?: "Failed to create category"))
+                }
             )
-            _events.emit(SetupEvent.CategoryCreated)
         }
     }
 
@@ -346,7 +504,8 @@ class SetupViewModel @Inject constructor(
     }
 
     /**
-     * Confirms category deletion, reassigning products to the selected category.
+     * Confirms category deletion. The backend reassigns products to the chosen
+     * category and removes the category; the repository mirrors this locally.
      */
     fun confirmDeleteCategory() {
         val state = _uiState.value
@@ -354,23 +513,44 @@ class SetupViewModel @Inject constructor(
         val reassignId = state.reassignCategoryId ?: return
 
         viewModelScope.launch {
-            // Reassign products from deleted category to the chosen one
-            val productsToReassign = state.products.filter {
-                it.categoryId == category.categoryId
-            }
-            for (product in productsToReassign) {
-                inventoryRepository.updateProduct(product.copy(categoryId = reassignId))
-            }
-
-            // Delete the category
-            inventoryRepository.deleteCategory(category.categoryId)
-
-            _uiState.value = _uiState.value.copy(deletingCategory = null)
-            _events.emit(SetupEvent.CategoryDeleted)
+            inventoryRepository.deleteCategory(category.categoryId, reassignId).fold(
+                onSuccess = {
+                    _uiState.value = _uiState.value.copy(deletingCategory = null)
+                    _events.emit(SetupEvent.CategoryDeleted)
+                },
+                onFailure = { e ->
+                    _uiState.value = _uiState.value.copy(deletingCategory = null)
+                    _events.emit(SetupEvent.ShowError(e.message ?: "Failed to delete category"))
+                }
+            )
         }
     }
 
     // --- Drag-to-Reorder Categories ---
+
+    /**
+     * Moves a category one position up or down and persists the new order
+     * immediately. Provides a reliable alternative to long-press drag.
+     */
+    fun moveCategory(categoryId: String, up: Boolean) {
+        val current = _uiState.value.categories
+        val index = current.indexOfFirst { it.categoryId == categoryId }
+        if (index < 0) return
+        val target = if (up) index - 1 else index + 1
+        if (target !in current.indices) return
+
+        val reordered = current.toMutableList()
+            .apply { add(target, removeAt(index)) }
+            .mapIndexed { i, c -> c.copy(sortOrder = i + 1) }
+
+        _uiState.value = _uiState.value.copy(categories = reordered)
+        reorderJob?.cancel()
+        reorderJob = viewModelScope.launch {
+            inventoryRepository.reorderCategories(reordered).onFailure { e ->
+                _events.emit(SetupEvent.ShowError(e.message ?: "Failed to reorder categories"))
+            }
+        }
+    }
 
     /**
      * Called when user reorders categories via drag-and-drop.
@@ -387,7 +567,9 @@ class SetupViewModel @Inject constructor(
         reorderJob?.cancel()
         reorderJob = viewModelScope.launch {
             delay(REORDER_DEBOUNCE_MS)
-            inventoryRepository.reorderCategories(updated)
+            inventoryRepository.reorderCategories(updated).onFailure { e ->
+                _events.emit(SetupEvent.ShowError(e.message ?: "Failed to reorder categories"))
+            }
         }
     }
 

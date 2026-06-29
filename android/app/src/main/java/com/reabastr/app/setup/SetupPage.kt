@@ -17,12 +17,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -65,6 +69,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.reabastr.app.R
 import com.reabastr.app.data.local.entity.CategoryEntity
 import com.reabastr.app.data.local.entity.ProductEntity
+import com.reabastr.app.ui.components.IdentifierListEditor
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -157,12 +162,23 @@ fun SetupPage(
                         formName = uiState.productFormName,
                         formIdealQty = uiState.productFormIdealQty,
                         formCategoryId = uiState.productFormCategoryId,
+                        formEans = uiState.productFormEans,
+                        formEanInput = uiState.productFormEanInput,
+                        formRefs = uiState.productFormRefs,
+                        formRefInput = uiState.productFormRefInput,
                         formNameError = uiState.productFormNameError,
                         formIdealQtyError = uiState.productFormIdealQtyError,
                         formCategoryError = uiState.productFormCategoryError,
+                        formEanError = uiState.productFormEanError,
                         onNameChange = viewModel::updateProductFormName,
                         onIdealQtyChange = viewModel::updateProductFormIdealQty,
                         onCategoryChange = viewModel::updateProductFormCategoryId,
+                        onEanInputChange = viewModel::updateProductFormEanInput,
+                        onAddEan = viewModel::addProductFormEan,
+                        onRemoveEan = viewModel::removeProductFormEan,
+                        onRefInputChange = viewModel::updateProductFormRefInput,
+                        onAddRef = viewModel::addProductFormRef,
+                        onRemoveRef = viewModel::removeProductFormRef,
                         onCreateProduct = viewModel::createProduct,
                         onEditProduct = viewModel::startEditingProduct,
                         onDeleteProduct = viewModel::deleteProduct
@@ -176,7 +192,8 @@ fun SetupPage(
                         onNameChange = viewModel::updateCategoryFormName,
                         onCreateCategory = viewModel::createCategory,
                         onDeleteCategory = viewModel::startDeletingCategory,
-                        onReorder = viewModel::reorderCategories
+                        onReorder = viewModel::reorderCategories,
+                        onMoveCategory = viewModel::moveCategory
                     )
                 }
             }
@@ -190,11 +207,22 @@ fun SetupPage(
             name = uiState.editProductName,
             idealQty = uiState.editProductIdealQty,
             categoryId = uiState.editProductCategoryId,
+            eans = uiState.editProductEans,
+            eanInput = uiState.editProductEanInput,
+            refs = uiState.editProductRefs,
+            refInput = uiState.editProductRefInput,
             nameError = uiState.editProductNameError,
             idealQtyError = uiState.editProductIdealQtyError,
+            eanError = uiState.editProductEanError,
             onNameChange = viewModel::updateEditProductName,
             onIdealQtyChange = viewModel::updateEditProductIdealQty,
             onCategoryChange = viewModel::updateEditProductCategoryId,
+            onEanInputChange = viewModel::updateEditProductEanInput,
+            onAddEan = viewModel::addEditProductEan,
+            onRemoveEan = viewModel::removeEditProductEan,
+            onRefInputChange = viewModel::updateEditProductRefInput,
+            onAddRef = viewModel::addEditProductRef,
+            onRemoveRef = viewModel::removeEditProductRef,
             onSave = viewModel::saveEditedProduct,
             onDismiss = viewModel::dismissEditProduct
         )
@@ -223,12 +251,23 @@ private fun ProductsTab(
     formName: String,
     formIdealQty: String,
     formCategoryId: String?,
+    formEans: List<String>,
+    formEanInput: String,
+    formRefs: List<String>,
+    formRefInput: String,
     formNameError: Boolean,
     formIdealQtyError: Boolean,
     formCategoryError: Boolean,
+    formEanError: Boolean,
     onNameChange: (String) -> Unit,
     onIdealQtyChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
+    onEanInputChange: (String) -> Unit,
+    onAddEan: () -> Unit,
+    onRemoveEan: (String) -> Unit,
+    onRefInputChange: (String) -> Unit,
+    onAddRef: () -> Unit,
+    onRemoveRef: (String) -> Unit,
     onCreateProduct: () -> Unit,
     onEditProduct: (ProductEntity) -> Unit,
     onDeleteProduct: (String) -> Unit
@@ -245,12 +284,23 @@ private fun ProductsTab(
                 name = formName,
                 idealQty = formIdealQty,
                 categoryId = formCategoryId,
+                eans = formEans,
+                eanInput = formEanInput,
+                refs = formRefs,
+                refInput = formRefInput,
                 nameError = formNameError,
                 idealQtyError = formIdealQtyError,
                 categoryError = formCategoryError,
+                eanError = formEanError,
                 onNameChange = onNameChange,
                 onIdealQtyChange = onIdealQtyChange,
                 onCategoryChange = onCategoryChange,
+                onEanInputChange = onEanInputChange,
+                onAddEan = onAddEan,
+                onRemoveEan = onRemoveEan,
+                onRefInputChange = onRefInputChange,
+                onAddRef = onAddRef,
+                onRemoveRef = onRemoveRef,
                 onCreate = onCreateProduct
             )
         }
@@ -293,12 +343,23 @@ private fun CreateProductForm(
     name: String,
     idealQty: String,
     categoryId: String?,
+    eans: List<String>,
+    eanInput: String,
+    refs: List<String>,
+    refInput: String,
     nameError: Boolean,
     idealQtyError: Boolean,
     categoryError: Boolean,
+    eanError: Boolean,
     onNameChange: (String) -> Unit,
     onIdealQtyChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
+    onEanInputChange: (String) -> Unit,
+    onAddEan: () -> Unit,
+    onRemoveEan: (String) -> Unit,
+    onRefInputChange: (String) -> Unit,
+    onAddRef: () -> Unit,
+    onRemoveRef: (String) -> Unit,
     onCreate: () -> Unit
 ) {
     Card(
@@ -354,6 +415,41 @@ private fun CreateProductForm(
                 selectedCategoryId = categoryId,
                 isError = categoryError,
                 onCategorySelected = onCategoryChange
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = stringResource(R.string.setup_product_identifiers_header),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            IdentifierListEditor(
+                label = stringResource(R.string.setup_product_ean_label),
+                values = eans,
+                inputValue = eanInput,
+                isError = eanError,
+                errorText = stringResource(R.string.setup_product_ean_error),
+                numeric = true,
+                onInputChange = onEanInputChange,
+                onAdd = onAddEan,
+                onRemove = onRemoveEan
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            IdentifierListEditor(
+                label = stringResource(R.string.setup_product_ref_label),
+                values = refs,
+                inputValue = refInput,
+                isError = false,
+                errorText = null,
+                numeric = false,
+                onInputChange = onRefInputChange,
+                onAdd = onAddRef,
+                onRemove = onRemoveRef
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -439,7 +535,8 @@ private fun CategoriesTab(
     onNameChange: (String) -> Unit,
     onCreateCategory: () -> Unit,
     onDeleteCategory: (CategoryEntity) -> Unit,
-    onReorder: (List<CategoryEntity>) -> Unit
+    onReorder: (List<CategoryEntity>) -> Unit,
+    onMoveCategory: (String, Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -471,7 +568,8 @@ private fun CategoriesTab(
             ReorderableCategoryList(
                 categories = categories,
                 onReorder = onReorder,
-                onDelete = onDeleteCategory
+                onDelete = onDeleteCategory,
+                onMove = onMoveCategory
             )
         }
     }
@@ -530,7 +628,8 @@ private fun CreateCategoryForm(
 private fun ReorderableCategoryList(
     categories: List<CategoryEntity>,
     onReorder: (List<CategoryEntity>) -> Unit,
-    onDelete: (CategoryEntity) -> Unit
+    onDelete: (CategoryEntity) -> Unit,
+    onMove: (String, Boolean) -> Unit
 ) {
     var data by remember(categories) { mutableStateOf(categories) }
     val state = rememberReorderableLazyListState(
@@ -577,7 +676,7 @@ private fun ReorderableCategoryList(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -595,6 +694,33 @@ private fun ReorderableCategoryList(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
                         )
+                        val index = data.indexOfFirst { it.categoryId == category.categoryId }
+                        IconButton(
+                            onClick = { onMove(category.categoryId, true) },
+                            enabled = index > 0,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.KeyboardArrowUp,
+                                contentDescription = stringResource(
+                                    R.string.setup_move_up_description,
+                                    category.name
+                                )
+                            )
+                        }
+                        IconButton(
+                            onClick = { onMove(category.categoryId, false) },
+                            enabled = index >= 0 && index < data.size - 1,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.KeyboardArrowDown,
+                                contentDescription = stringResource(
+                                    R.string.setup_move_down_description,
+                                    category.name
+                                )
+                            )
+                        }
                         IconButton(onClick = { onDelete(category) }) {
                             Icon(
                                 Icons.Default.Delete,
@@ -621,11 +747,22 @@ private fun EditProductDialog(
     name: String,
     idealQty: String,
     categoryId: String?,
+    eans: List<String>,
+    eanInput: String,
+    refs: List<String>,
+    refInput: String,
     nameError: Boolean,
     idealQtyError: Boolean,
+    eanError: Boolean,
     onNameChange: (String) -> Unit,
     onIdealQtyChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
+    onEanInputChange: (String) -> Unit,
+    onAddEan: () -> Unit,
+    onRemoveEan: (String) -> Unit,
+    onRefInputChange: (String) -> Unit,
+    onAddRef: () -> Unit,
+    onRemoveRef: (String) -> Unit,
     onSave: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -633,7 +770,9 @@ private fun EditProductDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.setup_edit_product_title)) },
         text = {
-            Column {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = onNameChange,
@@ -668,6 +807,36 @@ private fun EditProductDialog(
                     selectedCategoryId = categoryId,
                     isError = false,
                     onCategorySelected = onCategoryChange
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.setup_product_identifiers_header),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                IdentifierListEditor(
+                    label = stringResource(R.string.setup_product_ean_label),
+                    values = eans,
+                    inputValue = eanInput,
+                    isError = eanError,
+                    errorText = stringResource(R.string.setup_product_ean_error),
+                    numeric = true,
+                    onInputChange = onEanInputChange,
+                    onAdd = onAddEan,
+                    onRemove = onRemoveEan
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                IdentifierListEditor(
+                    label = stringResource(R.string.setup_product_ref_label),
+                    values = refs,
+                    inputValue = refInput,
+                    isError = false,
+                    errorText = null,
+                    numeric = false,
+                    onInputChange = onRefInputChange,
+                    onAdd = onAddRef,
+                    onRemove = onRemoveRef
                 )
             }
         },
