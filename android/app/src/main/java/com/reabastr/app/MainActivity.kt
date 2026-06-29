@@ -24,12 +24,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.reabastr.app.auth.AuthState
 import com.reabastr.app.auth.AuthViewModel
 import com.reabastr.app.auth.SignInScreen
-import com.reabastr.app.home.HomePage
-import com.reabastr.app.home.HomeViewModel
+import com.reabastr.app.auth.SignUpScreen
+import com.reabastr.app.auth.WelcomeScreen
+import com.reabastr.app.nav.MainScaffold
 import com.reabastr.app.onboarding.OnboardScreen
 import com.reabastr.app.onboarding.OnboardState
 import com.reabastr.app.onboarding.OnboardViewModel
-import com.reabastr.app.scanner.ScannerOverlay
 import com.reabastr.app.scanner.ScannerService
 import com.reabastr.app.ui.theme.ReabastrTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,20 +68,27 @@ class MainActivity : ComponentActivity() {
         val uri = intent?.data ?: return
         if (uri.scheme == "reabastr" && uri.host == "callback") {
             val code = uri.getQueryParameter("code")
-            if (code != null) {
-                // Store code for the ViewModel to pick up
-                OAuthCallbackHolder.pendingCode = code
+            val error = uri.getQueryParameter("error")
+            when {
+                code != null -> OAuthCallbackHolder.pendingCode = code
+                error != null -> {
+                    val description = uri.getQueryParameter("error_description")
+                    OAuthCallbackHolder.pendingError = description ?: error
+                }
             }
         }
     }
 }
 
 /**
- * Simple holder for the OAuth authorization code between Activity and ViewModel.
- * This is needed because the callback arrives via intent before Compose is aware.
+ * Holder for the OAuth result between Activity and Compose. The fields are
+ * Compose state so that setting them from [MainActivity.onNewIntent] triggers
+ * a recomposition, allowing the app to pick up the authorization code (or error)
+ * even though the deep link arrives outside the Compose lifecycle.
  */
 object OAuthCallbackHolder {
-    var pendingCode: String? = null
+    var pendingCode by mutableStateOf<String?>(null)
+    var pendingError by mutableStateOf<String?>(null)
 }
 
 @Composable
@@ -89,11 +96,23 @@ fun ReabastrApp(scannerService: ScannerService) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    // Check for pending OAuth callback
+    // Consume a pending OAuth callback (code or error) reactively. Setting the
+    // holder fields from onNewIntent triggers recomposition, and this effect
+    // runs the token exchange exactly once per delivered code.
     val pendingCode = OAuthCallbackHolder.pendingCode
-    if (pendingCode != null) {
-        OAuthCallbackHolder.pendingCode = null
-        authViewModel.handleOAuthCallback(pendingCode)
+    LaunchedEffect(pendingCode) {
+        if (pendingCode != null) {
+            OAuthCallbackHolder.pendingCode = null
+            authViewModel.handleOAuthCallback(pendingCode)
+        }
+    }
+
+    val pendingError = OAuthCallbackHolder.pendingError
+    LaunchedEffect(pendingError) {
+        if (pendingError != null) {
+            OAuthCallbackHolder.pendingError = null
+            authViewModel.onOAuthError(pendingError)
+        }
     }
 
     when (authState) {
@@ -106,11 +125,40 @@ fun ReabastrApp(scannerService: ScannerService) {
             }
         }
         is AuthState.Unauthenticated -> {
-            SignInScreen(viewModel = authViewModel)
+            AuthFlow(authViewModel = authViewModel)
         }
         is AuthState.Authenticated -> {
             AuthenticatedContent(scannerService = scannerService)
         }
+    }
+}
+
+/**
+ * The signed-out experience: a welcome screen branching to log-in or sign-up,
+ * with back navigation between them.
+ */
+private enum class AuthScreen { Welcome, LogIn, SignUp }
+
+@Composable
+private fun AuthFlow(authViewModel: AuthViewModel) {
+    var screen by remember { mutableStateOf(AuthScreen.Welcome) }
+
+    when (screen) {
+        AuthScreen.Welcome -> WelcomeScreen(
+            onLogIn = { screen = AuthScreen.LogIn },
+            onSignUp = {
+                authViewModel.resetSignUp()
+                screen = AuthScreen.SignUp
+            }
+        )
+        AuthScreen.LogIn -> SignInScreen(
+            viewModel = authViewModel,
+            onBack = { screen = AuthScreen.Welcome }
+        )
+        AuthScreen.SignUp -> SignUpScreen(
+            viewModel = authViewModel,
+            onBack = { screen = AuthScreen.Welcome }
+        )
     }
 }
 
@@ -137,43 +185,12 @@ private fun AuthenticatedContent(scannerService: ScannerService) {
         }
         is OnboardState.HasHousehold -> {
             val householdId = (onboardState as OnboardState.HasHousehold).householdId
-            MainAppContent(householdId = householdId, scannerService = scannerService)
+            MainScaffold(
+                householdId = householdId,
+                scannerService = scannerService,
+                onHouseholdLeft = { onboardViewModel.checkHousehold() },
+                onSignedOut = { /* authState flips to Unauthenticated; UI reacts */ }
+            )
         }
-    }
-}
-
-/**
- * Main app content after authentication and onboarding are complete.
- * Currently shows the Home page (Take from Stock) with scanner overlay support.
- */
-@Composable
-private fun MainAppContent(householdId: String, scannerService: ScannerService) {
-    val homeViewModel: HomeViewModel = hiltViewModel()
-    var isScannerVisible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(householdId) {
-        homeViewModel.setHouseholdId(householdId)
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        HomePage(
-            viewModel = homeViewModel,
-            onNavigateToQuickCreate = { /* Will be wired in task 15.2 */ },
-            onOpenScanner = { isScannerVisible = true }
-        )
-
-        // Scanner overlay — shared composable, shown as full-screen overlay
-        ScannerOverlay(
-            isVisible = isScannerVisible,
-            scannerService = scannerService,
-            onBarcodeScanned = { ean ->
-                isScannerVisible = false
-                scannerService.stopScanning()
-                homeViewModel.onScanResult(ean)
-            },
-            onDismiss = {
-                isScannerVisible = false
-            }
-        )
     }
 }
