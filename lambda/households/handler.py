@@ -182,10 +182,18 @@ def _create_household(user_sub: str, body: dict[str, Any]) -> dict[str, Any]:
 
 
 def _leave_household(user_sub: str) -> dict[str, Any]:
-    """POST /household/leave — remove membership. Cleanup if last member."""
+    """POST /household/leave — remove membership. Cleanup if last member.
+
+    Idempotent: if the caller has no membership (already left or never joined),
+    return 200 so the client can proceed to onboarding rather than erroring.
+    """
     membership = _find_membership(user_sub)
     if not membership:
-        raise NotFoundError("User is not a member of any household")
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"left": None, "alreadyLeft": True}),
+        }
 
     hh_id = membership["GSI1SK"].removeprefix("HH#")
 

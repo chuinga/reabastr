@@ -158,7 +158,7 @@ def _create_category(hh_id: str, body: dict[str, Any]) -> dict[str, Any]:
 
     # Determine next sortOrder
     categories = _get_all_categories(hh_id)
-    max_sort = max((c.get("sortOrder", 0) for c in categories), default=0)
+    max_sort = max((int(c.get("sortOrder", 0)) for c in categories), default=0)
     next_sort = max_sort + 1
 
     cat_id = f"cat_{uuid.uuid4().hex}"
