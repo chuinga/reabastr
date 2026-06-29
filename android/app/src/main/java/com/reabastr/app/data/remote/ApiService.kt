@@ -91,7 +91,8 @@ interface ApiService {
 
     @DELETE("categories/{categoryId}")
     suspend fun deleteCategory(
-        @Path("categoryId") categoryId: String
+        @Path("categoryId") categoryId: String,
+        @Query("reassignTo") reassignTo: String
     ): Response<Unit>
 
     @PUT("categories/reorder")

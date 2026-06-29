@@ -2,6 +2,8 @@ package com.reabastr.app.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.reabastr.app.data.local.ReabastrDatabase
 import com.reabastr.app.data.local.dao.CategoryDao
 import com.reabastr.app.data.local.dao.OutboxDao
@@ -17,6 +19,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    /**
+     * v1 → v2: adds the `refs` column (free-form product reference codes), stored
+     * as a JSON array string like `eans`. Defaults to an empty list for existing rows.
+     */
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE products ADD COLUMN refs TEXT NOT NULL DEFAULT '[]'")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): ReabastrDatabase {
@@ -24,7 +36,9 @@ object DatabaseModule {
             context,
             ReabastrDatabase::class.java,
             "reabastr.db"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides

@@ -11,6 +11,7 @@ data class ProductResponse(
     @SerializedName("idealQty") val idealQty: Int,
     @SerializedName("currentQty") val currentQty: Int,
     @SerializedName("eans") val eans: List<String>,
+    @SerializedName("refs") val refs: List<String> = emptyList(),
     @SerializedName("createdAt") val createdAt: String? = null
 )
 
@@ -18,13 +19,15 @@ data class CreateProductRequest(
     @SerializedName("name") val name: String,
     @SerializedName("categoryId") val categoryId: String,
     @SerializedName("idealQty") val idealQty: Int,
-    @SerializedName("eans") val eans: List<String> = emptyList()
+    @SerializedName("eans") val eans: List<String> = emptyList(),
+    @SerializedName("refs") val refs: List<String> = emptyList()
 )
 
 data class UpdateProductRequest(
     @SerializedName("name") val name: String? = null,
     @SerializedName("categoryId") val categoryId: String? = null,
-    @SerializedName("idealQty") val idealQty: Int? = null
+    @SerializedName("idealQty") val idealQty: Int? = null,
+    @SerializedName("refs") val refs: List<String>? = null
 )
 
 // --- EAN ---

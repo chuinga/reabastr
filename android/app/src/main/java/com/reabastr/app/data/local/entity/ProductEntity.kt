@@ -12,5 +12,6 @@ data class ProductEntity(
     val idealQty: Int,
     val currentQty: Int,
     val eans: List<String>,
+    val refs: List<String> = emptyList(),
     val lastSyncedAt: Long
 )

@@ -27,6 +27,9 @@ interface ProductDao {
     @Query("UPDATE products SET currentQty = currentQty + :delta WHERE productId = :productId")
     suspend fun applyDelta(productId: String, delta: Int)
 
+    @Query("UPDATE products SET categoryId = :toCategoryId WHERE categoryId = :fromCategoryId")
+    suspend fun reassignCategory(fromCategoryId: String, toCategoryId: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(product: ProductEntity)
 

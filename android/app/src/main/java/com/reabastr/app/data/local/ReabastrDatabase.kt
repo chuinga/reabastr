@@ -13,7 +13,7 @@ import com.reabastr.app.data.local.entity.ProductEntity
 
 @Database(
     entities = [ProductEntity::class, CategoryEntity::class, OutboxEvent::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
