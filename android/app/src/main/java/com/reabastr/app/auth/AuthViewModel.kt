@@ -16,6 +16,21 @@ data class SignInUiState(
     val password: String = ""
 )
 
+/**
+ * UI state for the sign-up flow, including the email-confirmation step.
+ */
+data class SignUpUiState(
+    val name: String = "",
+    val email: String = "",
+    val password: String = "",
+    val confirmationCode: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val infoMessage: String? = null,
+    /** True once SignUp succeeded and a verification code was emailed. */
+    val awaitingConfirmation: Boolean = false
+)
+
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -23,6 +38,9 @@ class AuthViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
+
+    private val _signUpState = MutableStateFlow(SignUpUiState())
+    val signUpState: StateFlow<SignUpUiState> = _signUpState.asStateFlow()
 
     val authState: StateFlow<AuthState> = authRepository.authState
 
@@ -62,6 +80,14 @@ class AuthViewModel @Inject constructor(
     }
 
     /**
+     * Surfaces an OAuth error returned on the callback redirect (e.g. user
+     * denied consent or the provider returned an error).
+     */
+    fun onOAuthError(message: String) {
+        _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = message)
+    }
+
+    /**
      * Signs in with email and password.
      */
     fun signInWithEmailPassword() {
@@ -90,5 +116,120 @@ class AuthViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    // --- Sign-up flow ---
+
+    fun onSignUpNameChanged(name: String) {
+        _signUpState.value = _signUpState.value.copy(name = name, errorMessage = null)
+    }
+
+    fun onSignUpEmailChanged(email: String) {
+        _signUpState.value = _signUpState.value.copy(email = email, errorMessage = null)
+    }
+
+    fun onSignUpPasswordChanged(password: String) {
+        _signUpState.value = _signUpState.value.copy(password = password, errorMessage = null)
+    }
+
+    fun onConfirmationCodeChanged(code: String) {
+        _signUpState.value = _signUpState.value.copy(confirmationCode = code, errorMessage = null)
+    }
+
+    /**
+     * Validates and submits the sign-up form. On success, moves to the
+     * email-confirmation step (or signs in directly if no confirmation needed).
+     */
+    fun signUp() {
+        val state = _signUpState.value
+        val email = state.email.trim()
+        val password = state.password
+
+        if (email.isBlank() || password.isBlank()) {
+            _signUpState.value = state.copy(errorMessage = "Email and password are required")
+            return
+        }
+        if (password.length < 8) {
+            _signUpState.value = state.copy(errorMessage = "Password must be at least 8 characters")
+            return
+        }
+
+        viewModelScope.launch {
+            _signUpState.value = _signUpState.value.copy(isLoading = true, errorMessage = null)
+            val result = authRepository.signUp(email, password, state.name.trim().ifBlank { null })
+            result.fold(
+                onSuccess = { needsConfirmation ->
+                    if (needsConfirmation) {
+                        _signUpState.value = _signUpState.value.copy(
+                            isLoading = false,
+                            awaitingConfirmation = true
+                        )
+                    } else {
+                        // Pool auto-confirmed — sign in directly
+                        authRepository.signInWithEmailPassword(email, password)
+                        _signUpState.value = _signUpState.value.copy(isLoading = false)
+                    }
+                },
+                onFailure = { error ->
+                    _signUpState.value = _signUpState.value.copy(
+                        isLoading = false,
+                        errorMessage = error.message
+                    )
+                }
+            )
+        }
+    }
+
+    /**
+     * Confirms the account with the emailed code, then auto signs in.
+     */
+    fun confirmSignUp() {
+        val state = _signUpState.value
+        if (state.confirmationCode.isBlank()) {
+            _signUpState.value = state.copy(errorMessage = "Enter the verification code")
+            return
+        }
+
+        viewModelScope.launch {
+            _signUpState.value = _signUpState.value.copy(isLoading = true, errorMessage = null)
+            val result = authRepository.confirmSignUp(
+                email = state.email.trim(),
+                password = state.password,
+                code = state.confirmationCode.trim()
+            )
+            _signUpState.value = _signUpState.value.copy(
+                isLoading = false,
+                errorMessage = result.exceptionOrNull()?.message
+            )
+            // On success, authState flips to Authenticated and navigation reacts.
+        }
+    }
+
+    /**
+     * Resends the verification code to the sign-up email.
+     */
+    fun resendConfirmationCode() {
+        val email = _signUpState.value.email.trim()
+        if (email.isBlank()) return
+        viewModelScope.launch {
+            _signUpState.value = _signUpState.value.copy(isLoading = true, errorMessage = null)
+            val result = authRepository.resendConfirmationCode(email)
+            _signUpState.value = _signUpState.value.copy(
+                isLoading = false,
+                errorMessage = result.exceptionOrNull()?.message,
+                infoMessage = if (result.isSuccess) "Code resent" else null
+            )
+        }
+    }
+
+    /**
+     * Resets the sign-up state (e.g. when leaving the sign-up flow).
+     */
+    fun resetSignUp() {
+        _signUpState.value = SignUpUiState()
+    }
+
+    fun clearSignUpMessages() {
+        _signUpState.value = _signUpState.value.copy(errorMessage = null, infoMessage = null)
     }
 }

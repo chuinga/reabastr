@@ -120,6 +120,44 @@ class AuthRepository @Inject constructor(
     }
 
     /**
+     * Registers a new user. Returns [Result] wrapping whether email confirmation
+     * is required (true) before the user can sign in.
+     */
+    suspend fun signUp(email: String, password: String, name: String?): Result<Boolean> {
+        return try {
+            val needsConfirmation = cognitoAuthService.signUp(email, password, name)
+            Result.success(needsConfirmation)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Confirms a newly registered account with the emailed code, then signs in.
+     */
+    suspend fun confirmSignUp(email: String, password: String, code: String): Result<Unit> {
+        return try {
+            cognitoAuthService.confirmSignUp(email, code)
+            // Auto sign-in after successful confirmation
+            signInWithEmailPassword(email, password)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Resends the email verification code for an unconfirmed account.
+     */
+    suspend fun resendConfirmationCode(email: String): Result<Unit> {
+        return try {
+            cognitoAuthService.resendConfirmationCode(email)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Returns a valid ID token for API calls, refreshing if needed.
      * Returns null if the user needs to re-authenticate.
      */

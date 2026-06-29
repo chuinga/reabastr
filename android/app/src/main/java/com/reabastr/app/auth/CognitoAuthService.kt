@@ -143,6 +143,121 @@ class CognitoAuthService @Inject constructor(
         }
 
     /**
+     * Registers a new user with email and password via the Cognito SignUp API.
+     * Returns true if a confirmation code was sent (user must confirm), false if
+     * the user is already confirmed (auto-confirmed pools).
+     */
+    suspend fun signUp(email: String, password: String, name: String?): Boolean =
+        withContext(Dispatchers.IO) {
+            val userAttributes = mutableListOf<JSONObject>()
+            userAttributes.add(JSONObject().apply {
+                put("Name", "email")
+                put("Value", email)
+            })
+            if (!name.isNullOrBlank()) {
+                userAttributes.add(JSONObject().apply {
+                    put("Name", "name")
+                    put("Value", name)
+                })
+            }
+
+            val payload = JSONObject().apply {
+                put("ClientId", AuthConfig.CLIENT_ID)
+                put("Username", email)
+                put("Password", password)
+                put("UserAttributes", org.json.JSONArray(userAttributes))
+            }
+
+            val response = postToCognito("SignUp", payload.toString())
+            val responseBody = response.body?.string() ?: throw AuthException("Empty response")
+
+            if (!response.isSuccessful) {
+                throw mapCognitoError(responseBody, fallback = "Sign-up failed")
+            }
+
+            val json = JSONObject(responseBody)
+            // UserConfirmed=false means a verification code was emailed.
+            !json.optBoolean("UserConfirmed", false)
+        }
+
+    /**
+     * Confirms a newly registered user with the emailed verification code.
+     */
+    suspend fun confirmSignUp(email: String, code: String): Unit = withContext(Dispatchers.IO) {
+        val payload = JSONObject().apply {
+            put("ClientId", AuthConfig.CLIENT_ID)
+            put("Username", email)
+            put("ConfirmationCode", code)
+        }
+
+        val response = postToCognito("ConfirmSignUp", payload.toString())
+        val responseBody = response.body?.string() ?: ""
+
+        if (!response.isSuccessful) {
+            throw mapCognitoError(responseBody, fallback = "Confirmation failed")
+        }
+    }
+
+    /**
+     * Resends the email verification code for an unconfirmed user.
+     */
+    suspend fun resendConfirmationCode(email: String): Unit = withContext(Dispatchers.IO) {
+        val payload = JSONObject().apply {
+            put("ClientId", AuthConfig.CLIENT_ID)
+            put("Username", email)
+        }
+
+        val response = postToCognito("ResendConfirmationCode", payload.toString())
+        val responseBody = response.body?.string() ?: ""
+
+        if (!response.isSuccessful) {
+            throw mapCognitoError(responseBody, fallback = "Could not resend code")
+        }
+    }
+
+    /**
+     * Posts a JSON payload to the Cognito IDP endpoint for the given operation.
+     */
+    private fun postToCognito(operation: String, jsonPayload: String): okhttp3.Response {
+        val request = Request.Builder()
+            .url(cognitoEndpoint)
+            .addHeader("Content-Type", "application/x-amz-json-1.1")
+            .addHeader("X-Amz-Target", "AWSCognitoIdentityProviderService.$operation")
+            .post(jsonPayload.toRequestBody("application/x-amz-json-1.1".toMediaTypeOrNull()))
+            .build()
+        return httpClient.newCall(request).execute()
+    }
+
+    /**
+     * Maps a Cognito error response body to a user-friendly [AuthException].
+     */
+    private fun mapCognitoError(responseBody: String, fallback: String): AuthException {
+        val error = try {
+            JSONObject(responseBody)
+        } catch (_: Exception) {
+            null
+        }
+        val errorType = error?.optString("__type", "") ?: ""
+        val errorMessage = error?.optString("message", fallback) ?: fallback
+
+        return when {
+            errorType.contains("UsernameExists") ->
+                AuthException("An account with this email already exists")
+            errorType.contains("InvalidPassword") ->
+                AuthException("Password does not meet the requirements")
+            errorType.contains("CodeMismatch") ->
+                AuthException("Incorrect verification code")
+            errorType.contains("ExpiredCode") ->
+                AuthException("The verification code has expired")
+            errorType.contains("InvalidParameter") ->
+                AuthException(errorMessage)
+            errorType.contains("LimitExceeded") ->
+                AuthException("Too many attempts. Please wait and try again.")
+            else -> AuthException("$fallback: $errorMessage")
+        }
+    }
+
+    /**
      * Refreshes tokens using the stored refresh token.
      */
     suspend fun refreshTokens(refreshToken: String): TokenResponse = withContext(Dispatchers.IO) {
