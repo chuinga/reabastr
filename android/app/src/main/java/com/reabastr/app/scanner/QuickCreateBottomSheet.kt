@@ -72,6 +72,7 @@ fun QuickCreateBottomSheet(
         QuickCreateContent(
             uiState = uiState,
             onNameChange = viewModel::updateName,
+            onEanChange = viewModel::updateEan,
             onIdealQtyChange = viewModel::updateIdealQty,
             onCategorySelected = viewModel::updateSelectedCategoryId,
             onSubmit = viewModel::submit,
@@ -85,6 +86,7 @@ fun QuickCreateBottomSheet(
 private fun QuickCreateContent(
     uiState: QuickCreateUiState,
     onNameChange: (String) -> Unit,
+    onEanChange: (String) -> Unit,
     onIdealQtyChange: (String) -> Unit,
     onCategorySelected: (String) -> Unit,
     onSubmit: () -> Unit,
@@ -106,14 +108,29 @@ private fun QuickCreateContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // EAN field (read-only, pre-populated)
+        // EAN field: editable + optional in manual mode, read-only when pre-filled from a scan
         OutlinedTextField(
             value = uiState.ean,
-            onValueChange = {},
-            label = { Text(stringResource(R.string.quick_create_ean_label)) },
-            readOnly = true,
-            enabled = false,
+            onValueChange = onEanChange,
+            label = {
+                Text(
+                    stringResource(
+                        if (uiState.eanEditable) R.string.quick_create_ean_optional_label
+                        else R.string.quick_create_ean_label
+                    )
+                )
+            },
+            readOnly = !uiState.eanEditable,
+            enabled = uiState.eanEditable,
+            isError = uiState.eanError,
+            supportingText = if (uiState.eanError) {
+                { Text(stringResource(R.string.quick_create_ean_error)) }
+            } else null,
             singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
             modifier = Modifier.fillMaxWidth()
         )
 

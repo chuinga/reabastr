@@ -111,6 +111,15 @@ class HomeViewModel @Inject constructor(
     }
 
     /**
+     * Increments a product's stock by 1 (put into stock / restock).
+     */
+    fun incrementProduct(productId: String) {
+        viewModelScope.launch {
+            inventoryRepository.incrementStock(productId)
+        }
+    }
+
+    /**
      * Handles a scanned barcode result from the scanner.
      * - If EAN maps to a known product → decrement it
      * - If EAN is unknown → emit event to navigate to quick-create

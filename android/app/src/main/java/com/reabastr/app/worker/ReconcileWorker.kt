@@ -64,12 +64,12 @@ class ReconcileWorker @AssistedInject constructor(
                 .groupBy { it.productId }
                 .mapValues { (_, events) -> events.sumOf { it.delta } }
 
-            // Determine householdId from existing products or from the sync data
-            val householdId = resolveHouseholdId(syncData.products)
+            // Determine householdId: prefer the backend household, fall back to cache.
+            val householdId = resolveHouseholdId()
 
             if (householdId == null) {
                 Log.w(TAG, "Could not determine householdId for reconciliation")
-                return Result.failure()
+                return Result.success() // nothing to reconcile yet
             }
 
             // Convert server products to entities, preserving pending deltas
@@ -97,18 +97,20 @@ class ReconcileWorker @AssistedInject constructor(
     }
 
     /**
-     * Resolves the householdId from existing local products.
-     * In practice, the householdId should always be available from the existing cache.
+     * Resolves the householdId from the backend (authoritative), falling back to
+     * the local cache if the network lookup fails.
      */
-    private suspend fun resolveHouseholdId(@Suppress("UNUSED_PARAMETER") serverProducts: List<ProductResponse>): String? {
-        // Try to get householdId from existing local products
-        val existingProducts = productDao.getAllProducts()
-        if (existingProducts.isNotEmpty()) {
-            return existingProducts.first().householdId
+    private suspend fun resolveHouseholdId(): String? {
+        try {
+            val resp = apiService.getHousehold()
+            if (resp.isSuccessful) {
+                resp.body()?.householdId?.let { return it }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "getHousehold failed during reconcile; falling back to cache", e)
         }
-        // If no local products exist, we can't determine householdId from sync alone
-        // This would need to come from the auth/household context
-        return null
+        val existingProducts = productDao.getAllProducts()
+        return existingProducts.firstOrNull()?.householdId
     }
 
     private fun ProductResponse.toEntity(householdId: String, pendingDelta: Int): ProductEntity {
@@ -120,6 +122,7 @@ class ReconcileWorker @AssistedInject constructor(
             idealQty = idealQty,
             currentQty = currentQty + pendingDelta,
             eans = eans,
+            refs = refs,
             lastSyncedAt = System.currentTimeMillis()
         )
     }

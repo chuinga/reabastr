@@ -165,6 +165,16 @@ class ShoppingListViewModel @Inject constructor(
     }
 
     /**
+     * Decrements a product's stock by 1 (take from stock). Guarded against going
+     * below zero by the repository; a no-op at currentQty 0.
+     */
+    fun decrementProduct(productId: String) {
+        viewModelScope.launch {
+            inventoryRepository.decrementStock(productId)
+        }
+    }
+
+    /**
      * Handles a scanned barcode result from the scanner.
      * - If EAN maps to a known product → increment it (restock)
      * - If EAN is unknown → emit error event (no quick-create on Shopping List)

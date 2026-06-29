@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,7 +56,8 @@ import com.reabastr.app.data.local.entity.ProductEntity
 fun HomePage(
     viewModel: HomeViewModel,
     onNavigateToQuickCreate: (String) -> Unit = {},
-    onOpenScanner: () -> Unit = {}
+    onOpenScanner: () -> Unit = {},
+    onAddManually: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -86,6 +89,14 @@ fun HomePage(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                },
+                actions = {
+                    IconButton(onClick = onAddManually) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.home_add_manually)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -128,14 +139,16 @@ fun HomePage(
                 }
                 uiState.products.isEmpty() -> {
                     EmptyProductsState(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        onAddManually = onAddManually
                     )
                 }
                 else -> {
                     ProductList(
                         products = uiState.products,
                         outOfStockProductId = uiState.outOfStockProductId,
-                        onDecrement = { productId -> viewModel.decrementProduct(productId) }
+                        onDecrement = { productId -> viewModel.decrementProduct(productId) },
+                        onIncrement = { productId -> viewModel.incrementProduct(productId) }
                     )
                 }
             }
@@ -144,7 +157,10 @@ fun HomePage(
 }
 
 @Composable
-private fun EmptyProductsState(modifier: Modifier = Modifier) {
+private fun EmptyProductsState(
+    modifier: Modifier = Modifier,
+    onAddManually: () -> Unit
+) {
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,6 +177,12 @@ private fun EmptyProductsState(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = onAddManually) {
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.home_add_manually))
+        }
     }
 }
 
@@ -168,7 +190,8 @@ private fun EmptyProductsState(modifier: Modifier = Modifier) {
 private fun ProductList(
     products: List<ProductEntity>,
     outOfStockProductId: String?,
-    onDecrement: (String) -> Unit
+    onDecrement: (String) -> Unit,
+    onIncrement: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -187,7 +210,8 @@ private fun ProductList(
             ProductCard(
                 product = product,
                 isOutOfStock = product.productId == outOfStockProductId,
-                onDecrement = { onDecrement(product.productId) }
+                onDecrement = { onDecrement(product.productId) },
+                onIncrement = { onIncrement(product.productId) }
             )
         }
     }
@@ -197,7 +221,8 @@ private fun ProductList(
 private fun ProductCard(
     product: ProductEntity,
     isOutOfStock: Boolean,
-    onDecrement: () -> Unit
+    onDecrement: () -> Unit,
+    onIncrement: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -265,13 +290,13 @@ private fun ProductCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Decrement button
+            // Decrement button (take from stock)
             IconButton(
                 onClick = onDecrement,
                 enabled = product.currentQty > 0,
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
                 ),
@@ -280,6 +305,23 @@ private fun ProductCard(
                 Icon(
                     imageVector = Icons.Default.Remove,
                     contentDescription = stringResource(R.string.home_decrement_description, product.name)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Increment button (put into stock)
+            IconButton(
+                onClick = onIncrement,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.home_increment_description, product.name)
                 )
             }
         }

@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -126,7 +129,8 @@ fun ShoppingListPage(
                 else -> {
                     ShoppingList(
                         groups = uiState.groups,
-                        onIncrement = { productId -> viewModel.incrementProduct(productId) }
+                        onIncrement = { productId -> viewModel.incrementProduct(productId) },
+                        onDecrement = { productId -> viewModel.decrementProduct(productId) }
                     )
                 }
             }
@@ -165,7 +169,8 @@ private fun EmptyShoppingListState(modifier: Modifier = Modifier) {
 @Composable
 private fun ShoppingList(
     groups: List<ShoppingListGroup>,
-    onIncrement: (String) -> Unit
+    onIncrement: (String) -> Unit,
+    onDecrement: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -194,7 +199,8 @@ private fun ShoppingList(
             ) { item ->
                 ShoppingItemCard(
                     item = item,
-                    onIncrement = { onIncrement(item.product.productId) }
+                    onIncrement = { onIncrement(item.product.productId) },
+                    onDecrement = { onDecrement(item.product.productId) }
                 )
             }
         }
@@ -217,7 +223,8 @@ private fun CategoryHeader(categoryName: String) {
 @Composable
 private fun ShoppingItemCard(
     item: ShoppingListItem,
-    onIncrement: () -> Unit
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -250,17 +257,44 @@ private fun ShoppingItemCard(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Buy quantity badge
+            // Decrement button (−1, take from stock)
+            IconButton(
+                onClick = onDecrement,
+                enabled = item.product.currentQty > 0,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                ),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Remove,
+                    contentDescription = stringResource(
+                        R.string.shopping_decrement_description,
+                        item.product.name
+                    )
+                )
+            }
+
+            // Available / necessary ratio (e.g. 2/6)
             Text(
-                text = item.buyQty.toString(),
-                style = MaterialTheme.typography.titleLarge,
+                text = stringResource(
+                    R.string.shopping_qty_ratio,
+                    item.product.currentQty,
+                    item.product.idealQty
+                ),
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .widthIn(min = 48.dp)
+                    .padding(horizontal = 4.dp)
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            // Increment button (+1)
+            // Increment button (+1, restock)
             IconButton(
                 onClick = onIncrement,
                 colors = IconButtonDefaults.iconButtonColors(
