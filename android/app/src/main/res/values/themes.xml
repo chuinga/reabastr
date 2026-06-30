@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Reabastr" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Dark navy window theme: status bar + pre-Compose window background match
+         the always-dark Compose UI (background = Navy20 #0B1437). -->
+    <style name="Theme.Reabastr" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/brand_background</item>
+        <item name="android:statusBarColor">@color/brand_background</item>
+        <item name="android:navigationBarColor">@color/brand_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 </resources>
